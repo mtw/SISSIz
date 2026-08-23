@@ -9,6 +9,7 @@
 */
 
 #include <time.h>
+#include <unistd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -78,6 +79,7 @@ int main(int argc, char *argv[]){
   double freqsMono[4],freqsDi[4][4];
   double zScore;
   double maxRate;
+  unsigned int rngSeed;
  
 
   int tstvModel=0;
@@ -376,6 +378,18 @@ int main(int argc, char *argv[]){
     dest=outputFile; 
   }
 
+  if (args.seed_given){
+    rngSeed=(unsigned int)args.seed_arg;
+  } else {
+    /* time(NULL) alone has one second resolution, so screens that launch
+       many jobs at once would share a seed and thus a sample set. */
+    FILE *urandom=fopen("/dev/urandom","r");
+    if (urandom==NULL || fread(&rngSeed,sizeof(rngSeed),1,urandom)!=1){
+      rngSeed=(unsigned int)time(NULL)^((unsigned int)getpid()<<16);
+    }
+    if (urandom!=NULL) fclose(urandom);
+  }
+
   if (verbose){
   
     fprintf(dest,"# Input file: %s\n",inputFileName);
@@ -393,6 +407,7 @@ int main(int argc, char *argv[]){
       }
     }
     
+    fprintf(dest,"# Random seed: %u\n",rngSeed);
     fprintf(dest,"# Flanking sites: %u\n",mockSize);
     /*fprintf(dest,"# No. of samples to simulate: %u\n",numSamples);*/
     fprintf(dest,"# No. of samples for regression: %u\n\n",regressionSampleSize);
@@ -437,8 +452,7 @@ int main(int argc, char *argv[]){
   /* Set global variables for SISSI */
   
   randomgeneratordkiss=1;
-  srand (time(NULL));
-  start_kiss((long)rand());
+  start_kiss(rngSeed);
 
   nucleotide[0]='A';
   nucleotide[1]='C';
@@ -1603,6 +1617,7 @@ void help(void){
   printf("%s\n","  -m, --num-regression Number of sampled points for regression");
   printf("%s\n","  -f, --flanks         Number of flanking 'buffer' sites");
   printf("%s\n","  -v, --verbose        More verbose screen output");
+  printf("%s\n","  --seed               Random seed (default: from the system)");
   printf("%s\n","  --dna, --rna         Print Ts (default) or Us");
   printf("%s\n","                     Output format");
   printf("%s\n","  --clustal            CLUSTAL W");

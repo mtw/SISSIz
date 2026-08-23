@@ -10,6 +10,7 @@ option      "num-samples" n         "Number of samples"     int          no
 option      "num-samples-regression"        m  "Number of samples in regression"        int no
 option      "precision"                    p  "Cut-off for mononucleotide content (Euclidean distance of frequency vector)"       double     no
 option      "simulate"                      s  "Simulate only"        flag off
+option      "seed"                         -  "Seed for the random number generator (default: from the system)"    int no
 option      "verbose"                      v  "verbose"        flag off
 option      "mono"                         i  "Mononucleotide" flag off
 option      "di"                         d  "Mononucleotide" flag on

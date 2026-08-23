@@ -91,6 +91,10 @@ void bbionj(char* treeString,const struct aln *alignment[],double* distMatrix){
   *b=0;
   
   for(lig=1; lig <= n; lig++){
+    if(strlen(alignment[lig-1]->name) >= LEN){
+      fprintf(stderr,"ERROR: Sequence name longer than %d characters: %s\n",LEN-1,alignment[lig-1]->name);
+      exit(1);
+    }
     strcpy(name_taxon,alignment[lig-1]->name);
     name=(WORD *)calloc(1,sizeof(WORD));      
     if(name == NULL){                          

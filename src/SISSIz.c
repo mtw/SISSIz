@@ -96,7 +96,8 @@ int main(int argc, char *argv[]){
   double *distMatrix; /* matrix flat in one row */
 
   char c1,c2;
-  char treeString[10000];
+  char *treeString;
+  size_t treeStringSize;
   char* treeStringML;
   char *seq1, *seq2, *tmpSeq, *structure;
   char** names;
@@ -168,7 +169,7 @@ int main(int argc, char *argv[]){
       fprintf(stderr, "ERROR: Can't open input file %s\n", args.inputs[0]);
       exit(1);
     }
-    strcpy(inputFileName,args.inputs[0]);
+    snprintf(inputFileName,sizeof(inputFileName),"%s",args.inputs[0]);
   }
   
   if (args.flanks_given){
@@ -372,6 +373,12 @@ int main(int argc, char *argv[]){
     fprintf(stderr,"There must be at least two sequences in the alignment.\n");
     exit(1);
   }
+
+  /* Room for the Newick string: every taxon contributes its name, a
+     branch length and the surrounding punctuation. */
+  treeStringSize=64;
+  for (i=0;i<N;i++) treeStringSize+=strlen(inputAln[i]->name)+32;
+  treeString=(char*)space(treeStringSize);
 
   countFreqsMono((const struct aln**)inputAln, (double *) freqsMono); /* Mononucleotide frequencies */
   countFreqsDi((const struct aln**)inputAln, freqsDi); /* Dinucleotide frequencies */
@@ -583,7 +590,7 @@ int main(int argc, char *argv[]){
     
       d=dValues[counter];
 
-      sprintf(treeString,"(A:%.2f,B:%.2f);",d,d);
+      snprintf(treeString,treeStringSize,"(A:%.2f,B:%.2f);",d,d);
       tree=treeFromString(treeString);
 
       numTaxa=tree->numTips;
@@ -805,7 +812,7 @@ int main(int argc, char *argv[]){
       
       d=(1/parA)*log(1-(1/parB)*p);
 
-      sprintf(treeString,"(%s:%.f,%s:%.f);",inputAln[0]->name,d/2,inputAln[1]->name,d/2);
+      snprintf(treeString,treeStringSize,"(%s:%.f,%s:%.f);",inputAln[0]->name,d/2,inputAln[1]->name,d/2);
     
       tree=treeFromString(treeString);
 

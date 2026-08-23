@@ -604,7 +604,7 @@ int main(int argc, char *argv[]){
 
 
     /* In the first run calculate the site specific rates for the second run */
-    if (runNum==1){
+    if (runNum==1 && wSSR){
 
       /* Starting from local observed differences, SSRs are obtained
          by "correction" using the the formula that has been estimated
@@ -670,7 +670,7 @@ int main(int argc, char *argv[]){
         sum=scalingfactor_sum[i];
       }
       
-      if (wSSR) continue;
+      continue;
     }
     
     /* If more than two sequences a tree is inferred */
@@ -800,6 +800,9 @@ int main(int argc, char *argv[]){
         fprintf(dest,"# Simulate and fold alignments... \n\n");
       }
     }
+
+    /* Whichever run got this far built the tree we simulate along. */
+    break;
 
   }
 

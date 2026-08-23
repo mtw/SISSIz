@@ -11,7 +11,7 @@ install-sh
 missing
 src/*ps
 stamp-h1
-SISSIz
+/src/SISSIz
 SISSIz*.tar.gz
 Makefile.in
 Makefile

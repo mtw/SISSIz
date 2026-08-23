@@ -676,7 +676,12 @@ int main(int argc, char *argv[]){
         }
       }
 
-      adjustment=difference/(double)(L-countTooDiverged);
+      /* Every site capped leaves nothing to spread the surplus over. */
+      if (countTooDiverged<L){
+        adjustment=difference/(double)(L-countTooDiverged);
+      } else {
+        adjustment=0.0;
+      }
 
       for (i=0;i<L+mockSize;i++){
         if (ids[i]<maxP && i<L){

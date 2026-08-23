@@ -81,9 +81,17 @@ phydbl Brent_1dim(phydbl ax, phydbl bx, phydbl cx,
 		  phydbl *p, phydbl *xi, phydbl n);
 
 int Min_With_Derivatives(arbre *tree, phydbl *p, int n, phydbl ftol, phydbl step_size, 
-			 phydbl (*func) (), void (*dfunc)(), phydbl (*linmin)());
+			 phydbl (*func)(arbre *tree),
+			 void (*dfunc)(arbre *tree, phydbl *param, int n_param, phydbl stepsize,
+				       phydbl (*func)(arbre *tree), phydbl *derivatives),
+			 phydbl (*linmin)(arbre *tree));
 void BFGS(arbre *tree, phydbl *p, int n, phydbl gtol, phydbl step_size,
-	  phydbl(*func)(), void (*dfunc)(), void (*lnsrch)(),int *failed);
+	  phydbl (*func)(arbre *tree),
+	  void (*dfunc)(arbre *tree, phydbl *param, int n_param, phydbl stepsize,
+			phydbl (*func)(arbre *tree), phydbl *derivatives),
+	  void (*lnsrch)(arbre *tree, int n, phydbl *xold, phydbl fold, phydbl *g,
+			 phydbl *p, phydbl *x, phydbl *f, phydbl stpmax, int *check),
+	  int *failed);
 void Lnsrch_RR_Param(arbre *tree, int n, phydbl *xold, phydbl fold, phydbl *g, phydbl *p, phydbl *x,
 		     phydbl *f, phydbl stpmax, int *check);
 void Optimize_Single_Param_Generic(arbre *tree, phydbl *param, phydbl lim_inf, phydbl lim_sup, phydbl tol, int n_max_iter);

@@ -1441,7 +1441,12 @@ static double sqrarg;
 #define SQR(a) ((sqrarg=(a)) == 0.0 ? 0.0 : sqrarg*sqrarg)
 
 void BFGS(arbre *tree, phydbl *p, int n, phydbl gtol, phydbl step_size,
-	  phydbl(*func)(), void (*dfunc)(), void (*lnsrch)(),int *failed)
+	  phydbl (*func)(arbre *tree),
+	  void (*dfunc)(arbre *tree, phydbl *param, int n_param, phydbl stepsize,
+			phydbl (*func)(arbre *tree), phydbl *derivatives),
+	  void (*lnsrch)(arbre *tree, int n, phydbl *xold, phydbl fold, phydbl *g,
+			 phydbl *p, phydbl *x, phydbl *f, phydbl stpmax, int *check),
+	  int *failed)
 {
 
   int check,i,its,j;

@@ -866,7 +866,7 @@ void Hide_Ambiguities(allseq *data);
 void Print_Site_Lk(arbre *tree, FILE *fp);
 arbrelist *Make_Tree_List(int n_trees);
 option *Make_Input();
-arbre *Make_Tree();
+arbre *Make_Tree(int n_otu);
 void Make_All_Tree_Nodes(arbre *tree);
 void Make_All_Tree_Edges(arbre *tree);
 void Copy_Tax_Names_To_Tip_Labels(arbre *tree, allseq *data);

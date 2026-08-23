@@ -436,7 +436,9 @@ int main(int argc, char *argv[]){
 
     treeML((const struct aln**)inputAln,catGamma,&treeStringML,&kappaPar);
 
-    printf("TREE: %s", treeStringML);
+    if (verbose){
+      fprintf(dest,"\n# ML tree: %s\n# ",treeStringML);
+    }
 
     if (verbose){
       fprintf(dest,"kappa = %.2f\n",kappaPar);

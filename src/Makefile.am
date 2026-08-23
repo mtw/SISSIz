@@ -20,10 +20,12 @@ SISSIz_SOURCES = \
     treeML.h \
     treeML.c
 
+# Link the bundled convenience archives by path: a plain -lRNA would be
+# satisfied by an installed ViennaRNA in an earlier -L directory.
 LDADD = \
-    -L$(top_builddir)/librna -lRNA \
-    -lm \
-    -L$(top_builddir)/levmar -llevmar \
-    -L$(top_builddir)/sissiz -lSISSI \
-    -L$(top_builddir)/phyml -lPHYML
+    $(top_builddir)/librna/libRNA.a \
+    $(top_builddir)/levmar/liblevmar.a \
+    $(top_builddir)/sissiz/libSISSI.a \
+    $(top_builddir)/phyml/libPHYML.a \
+    -lm
 

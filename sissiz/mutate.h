@@ -74,7 +74,7 @@ extern int verboseScalingFactor;
 extern int verboseunnormScalingFactor;
 /* PROBABILITY TO SELECT THE POSITION  */  
 /* double *selsite(double rat[], double rsum, double *proselsite); */ 
-inline   int selsite(double rat[], double rsum, double *proselsite);           
+int selsite(double rat[], double rsum, double *proselsite);           
 int    rand_choose(double proselsite[]);                 /* RANDOM CHOOSE: Select one positon for the next mutation  */
 /* calculation of substitutions:  */
 double *probmut( int secpos, double *Qij, char *seq);    /* INDEPENDENT case*/

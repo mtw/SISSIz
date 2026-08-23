@@ -3,6 +3,12 @@ AM_INIT_AUTOMAKE
 
 AC_PROG_CC
 
+# AC_PROG_CC only supplies its default "-g -O2" when CFLAGS is unset.  A
+# CFLAGS inherited from the environment (say a bare -I) would otherwise
+# build the whole package unoptimised.
+AS_CASE([" $CFLAGS "],
+        [*" -O"*], [],
+        [CFLAGS="$CFLAGS -O2"])
 
 if test "$GCC" = yes; then
   AC_DEFINE(UNUSED, __attribute__ ((unused)), avoid warning about unused variables)

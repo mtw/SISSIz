@@ -252,6 +252,41 @@ int main(int argc, char *argv[]){
     exit(EXIT_SUCCESS);
   }
 
+  /* Out of range values used to run to completion and report nan or a
+     z-score of zero, which reads as "not significant" in a screen. */
+
+  if (simulateOnly){
+    if (numSamples<1){
+      fprintf(stderr,"ERROR: --num-samples must be at least 1.\n");
+      exit(1);
+    }
+  } else {
+    if (numSamples<2){
+      fprintf(stderr,"ERROR: --num-samples must be at least 2, a z-score needs a standard deviation.\n");
+      exit(1);
+    }
+  }
+
+  if (regressionSampleSize<1){
+    fprintf(stderr,"ERROR: --num-regression must be at least 1.\n");
+    exit(1);
+  }
+
+  if (precision<=0.0){
+    fprintf(stderr,"ERROR: --precision must be greater than 0.\n");
+    exit(1);
+  }
+
+  if (mockSize<0 && args.flanks_given){
+    fprintf(stderr,"ERROR: --flanks must not be negative.\n");
+    exit(1);
+  }
+
+  if (catGamma<1){
+    fprintf(stderr,"ERROR: --gamma must be at least 1.\n");
+    exit(1);
+  }
+
 
   if (args.print_rates_given){
     printRates=1;

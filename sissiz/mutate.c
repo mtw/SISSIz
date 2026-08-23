@@ -614,7 +614,9 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
          ancestorseq[i]=seq[i];
     /*************Time*****************************************/
     rsum =0.0;	
-	rsum = -seqlen;
+	/* Proposals are drawn at the uniformised rate of the jump chain that
+	   Pij describes, not at the rate of accepted substitutions. */
+	rsum = -seqlen*PijUnifRate;
 	if(verbosewaiting==1) fprintf(stderr,"\n rsum1= %f\n",rsum);
 	/*************Time*****************************************/
 	t    = timeoverall(rsum);
@@ -672,8 +674,10 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
 	  if(nucleotide[mutation] != seq[secpos]){
 	     substitutions++;
 	     seq=changeseq(seq,secpos,mutation);
-         t += timeoverall(rsum);
 	 } 
+	 /* A self transition is a virtual event of the uniformised chain and
+	    consumes waiting time like any other, so advance t either way. */
+	 t += timeoverall(rsum);
 	 /********************************************************/
     }	
 	osubstitutions=0;
@@ -979,6 +983,7 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
   int     substitutions, osubstitutions;
   double  *probmutij;
   int     mutation;
+  double  maxwait;
   double  **D;
   char dinucFilename[256];
   char dinucRightFilename[256];
@@ -989,7 +994,14 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
   for(i=0; i<numBases; i++) ancestorseq[i]=seq[i];
   rsum = 0.0;	   
  /* rsum = rate_sum(rat);*/
-  rsum=-seqlen;
+  maxwait=0.00;
+  for(j=0;j<4;j++) {
+    if(Qij[j*4+j]<maxwait) maxwait=Qij[j*4+j];
+  }
+  maxwait=-maxwait;
+  /* Proposals are drawn at the uniformised rate of the jump chain that
+     probmutqx describes, not at the rate of accepted substitutions. */
+  rsum=-seqlen*maxwait;
   /*************Time*****************************************/
   t    = timeoverall(rsum);
   substitutions=0;
@@ -1010,8 +1022,10 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
 	  if(nucleotide[mutation] != seq[secpos]){
 	    substitutions++;
 		seq=changeseq(seq,secpos,mutation);
-		t+=timeoverall(rsum);
 	  }	
+	  /* A self transition is a virtual event of the uniformised chain and
+	     consumes waiting time like any other, so advance t either way. */
+	  t+=timeoverall(rsum);
       free(probmutij);
       /*********************************/
 	 /* seq=changeseq(seq,secpos,mutation);*/

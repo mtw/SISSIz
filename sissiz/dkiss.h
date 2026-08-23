@@ -5,7 +5,7 @@
 #define starTup start_kiss
 
 double dkiss(void);
-void start_kiss(int seed);
+void start_kiss(unsigned int seed);
 void restart_kiss(unsigned int *vals);
 void kiss_state(unsigned int *vals);
 

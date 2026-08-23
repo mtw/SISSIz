@@ -1461,6 +1461,15 @@ double** computePij(double **QT2ij){
 
   Pij=(double**)malloc(64*sizeof(double*));
 
+  for(j=0 ; j<64; j++) {
+    if(QT2ij[j][j]<maxwait) maxwait=QT2ij[j][j];
+  }
+  maxwait=-maxwait;
+
+  /* Largest triplet exit rate; the jump chain below divides by it.
+     Published so callers can reject a degenerate rate matrix. */
+  PijUnifRate=maxwait;
+
   for (t=0;t<64;t++){
 
     probmutij_trip=(double *)malloc(64*sizeof(double));
@@ -1471,12 +1480,6 @@ double** computePij(double **QT2ij){
     waiting_qjj=0.00;
     norm=0.00;
 			
-    for(j=0 ; j<64; j++) {
-      if(QT2ij[j][j]<maxwait) maxwait=QT2ij[j][j];
-    }	
-
-		maxwait=-maxwait;
-
     probsum=0.00;
     for(j=0 ; j<64; j++) {
       if(t != j) 

@@ -16,6 +16,7 @@ int seqlen;
 double minimumvalue;	  
 
 double** Pij;
+double PijUnifRate;
 
 
   /*************************************/

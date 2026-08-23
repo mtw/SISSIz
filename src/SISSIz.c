@@ -77,6 +77,7 @@ int main(int argc, char *argv[]){
   double **QT2ij=NULL;
   double freqsMono[4],freqsDi[4][4];
   double zScore;
+  double maxRate;
  
 
   int tstvModel=0;
@@ -482,9 +483,21 @@ int main(int argc, char *argv[]){
   
   if (mono){
     Qij=rateRV();
+    maxRate=0.0;
+    for (i=0;i<4;i++){
+      if (-Qij[i*4+i]>maxRate) maxRate=-Qij[i*4+i];
+    }
   } else {
     QT2ij=rateT2();
     Pij=computePij(QT2ij);
+    maxRate=PijUnifRate;
+  }
+
+  /* A composition so skewed that every exit rate vanishes gives a rate
+     matrix of zeros; the simulation would then never terminate. */
+  if (!(maxRate>0.0)){
+    fprintf(stderr,"ERROR: Degenerate rate matrix, the nucleotide composition of %s is too skewed to simulate.\n",inputFileName);
+    exit(1);
   }
 
 

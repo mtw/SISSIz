@@ -11,6 +11,7 @@
 	 extern int seqlen;
 
 extern double** Pij;
+extern double PijUnifRate;
 
 
 	/* extern double minimumvalue;*/

@@ -1392,7 +1392,7 @@ int selsite(double rat[], double rsum, double *proselsite){
               dummy += probmutij[j];
               mutation=j;
               ++j;
-            }while(x>=dummy);
+            }while(x>=dummy && j<4);   /* rounding can leave dummy just short of x */
 
             return(mutation);
 	 }
@@ -1567,7 +1567,7 @@ int cchoosetriplet(double *probmutij_trip){
              dummy =  dummy + probmutij_trip[j];
              if(probmutij_trip[j] != 0) tripletmutation=j;
              ++j;
-           }while(x>=dummy ) ;
+           }while(x>=dummy && j<64) ;   /* rounding can leave dummy just short of x */
 		   
            /*free(probmutij_trip);*/
 		   

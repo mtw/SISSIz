@@ -593,7 +593,6 @@ void MutateSequenceZ(char *seq, double len, double **QT2ij){
 void MutateSequenceZqx(char *seq, double len, double **QT2ij){
  
    char    *ancestorseq;
-   double  *rat;                                  
    double  rsum;
    double  t=0;
    int trip;
@@ -607,15 +606,12 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
    char    dinucRightFilename[256];
    char    dhFilename[256];
    double  sumdinuc;
-   double  *proselsite;  /*stefan camb*/
 
      
 
-    proselsite=(double *)malloc(seqlen*sizeof(double));  /*stefan camb*/
 	ancestorseq =(char*)malloc(numBases*sizeof(char));
     for(i=0; i<numBases; i++)
          ancestorseq[i]=seq[i];
-	rat=(double *)calloc(seqlen,sizeof(double));
     /*************Time*****************************************/
     rsum =0.0;	
 	rsum = -seqlen;
@@ -680,7 +676,6 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
 	 } 
 	 /********************************************************/
     }	
-	free(rat);
 	osubstitutions=0;
 	for(i=0;i<numBases;i++){
 		if(ancestorseq[i]!=seq[i]) osubstitutions=osubstitutions+1;
@@ -790,7 +785,6 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
  }
   /*stefan mod.*/
 	free(ancestorseq);			
-  free(proselsite);
  
 
 }
@@ -979,7 +973,6 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
  
  void MutateSequenceIndqx(char *seq, double len, double *Qij){
   char    *ancestorseq;
-  double  *rat;                                  
   double  rsum;
   double  t=0;
   int     secpos,i,j;    
@@ -991,13 +984,9 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
   char dinucRightFilename[256];
   char dhFilename[256];
   double sumdinuc;
-  double *proselsite;  /*stefan camb*/
      
-  proselsite=(double *)malloc(seqlen*sizeof(double));  /*stefan camb*/
   ancestorseq =(char*)malloc(numBases*sizeof(char));
   for(i=0; i<numBases; i++) ancestorseq[i]=seq[i];
-  rat=(double *)calloc(seqlen,sizeof(double));
-  rate_independent(seq,Qij,rat);
   rsum = 0.0;	   
  /* rsum = rate_sum(rat);*/
   rsum=-seqlen;
@@ -1044,7 +1033,6 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
     /*  t += timeoverall(rsum);*/
       /********************************************************/
     }	
-	free(rat);
 	/*free(probmuttriple);*/
 	osubstitutions=0;
 	for(i=0;i<numBases;i++){
@@ -1155,7 +1143,6 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
 
   }
 	free(ancestorseq);			
-  free(proselsite);
 
 }
 

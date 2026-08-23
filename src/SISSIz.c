@@ -36,6 +36,9 @@
 #include "cmdline_sissiz.h"
 #include "treeML.h"
 
+/* Consecutive rejected samples tolerated before giving up on --precision */
+#define MAX_REJECTED 10000
+
 /* Function prototypes */
 
 TTree* treeFromString(char* treeStrin);
@@ -79,6 +82,7 @@ int main(int argc, char *argv[]){
   double freqsMono[4],freqsDi[4][4];
   double zScore;
   double maxRate;
+  unsigned int rejected;
   unsigned int rngSeed;
  
 
@@ -824,6 +828,7 @@ int main(int argc, char *argv[]){
 
  
   i=0;
+  rejected=0;
     
   //for (i=0;i<numSamples;i++){
 
@@ -866,8 +871,15 @@ int main(int argc, char *argv[]){
     squaredDiff=sqrt(squaredDiff);
 
     if (squaredDiff>precision){
+      freeAln(sampledAln);
+      if (++rejected>MAX_REJECTED){
+        fprintf(stderr,"ERROR: Could not reach a mononucleotide content within %.4f of the input after %u samples. Try a larger value for --precision.\n",precision,MAX_REJECTED);
+        exit(1);
+      }
       continue;
     } 
+
+    rejected=0;
 
     /*for (j=0;j<4;j++)  printf("%.4f ",currFreqsMono[j]);
       printf("%f\n", squaredDiff);*/

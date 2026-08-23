@@ -82,6 +82,7 @@ int main(int argc, char *argv[]){
   double freqsMono[4],freqsDi[4][4];
   double zScore;
   double maxRate;
+  unsigned long numAmbiguous;
   unsigned int rejected;
   unsigned int rngSeed;
  
@@ -146,7 +147,7 @@ int main(int argc, char *argv[]){
 
   beginModelTime=clock();
 
-  for (i=0;i<256;i++) ntMap[i]=0;
+  for (i=0;i<256;i++) ntMap[i]=-1;  /* anything but ACGTU is not a base */
 
   ntMap['A']=ntMap['a']=0;
   ntMap['C']=ntMap['c']=1;
@@ -307,13 +308,20 @@ int main(int argc, char *argv[]){
 
   readFunction(inputFile, inputAln);
 
+  numAmbiguous=0;
+
   for (i=0; inputAln[i]!=NULL; i++){
     tmpSeq=inputAln[i]->seq;
     j=0;
     while (tmpSeq[j]){
       tmpSeq[j]=toupper(tmpSeq[j]);
+      if (tmpSeq[j]!='-' && ntMap[(unsigned char)tmpSeq[j]]<0) numAmbiguous++;
       j++;
     }
+  }
+
+  if (numAmbiguous>0){
+    fprintf(stderr,"WARNING: Ignoring %lu ambiguous character(s) when estimating the nucleotide model.\n",numAmbiguous);
   }
 
   /* printAlnClustal(outputFile,(const struct aln**)inputAln); */
@@ -1139,8 +1147,8 @@ void countFreqsMono(const struct aln *alignment[], double freqs[]){
 
     k=0;
     while ((c=currSeq[k++])!='\0'){
-      if (c=='-') continue;
-      freqs[ntMap[c]]++;
+      if (ntMap[(unsigned char)c]<0) continue;   /* gaps and ambiguity codes */
+      freqs[ntMap[(unsigned char)c]]++;
       counter++;
     }
   }
@@ -1186,8 +1194,8 @@ void countFreqsDi(const struct aln *alignment[], double freqs[][4]){
       c1=currSeq[k];
       c2=currSeq[k+1];
 
-      if (c1!='-' && c2!='-'){
-        freqs[ntMap[c1]][ntMap[c2]]+=1;
+      if (ntMap[(unsigned char)c1]>=0 && ntMap[(unsigned char)c2]>=0){
+        freqs[ntMap[(unsigned char)c1]][ntMap[(unsigned char)c2]]+=1;
         counter++;
       }
     }

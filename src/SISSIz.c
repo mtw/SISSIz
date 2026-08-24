@@ -817,7 +817,7 @@ int main(int argc, char *argv[]){
       
       d=(1/parA)*log(1-(1/parB)*p);
 
-      snprintf(treeString,treeStringSize,"(%s:%.f,%s:%.f);",inputAln[0]->name,d/2,inputAln[1]->name,d/2);
+      snprintf(treeString,treeStringSize,"(%s:%.6f,%s:%.6f);",inputAln[0]->name,d/2,inputAln[1]->name,d/2);
     
       tree=treeFromString(treeString);
 

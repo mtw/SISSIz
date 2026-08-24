@@ -37,6 +37,6 @@ AC_PROG_INSTALL
 
 AC_CONFIG_HEADERS(config.h) 
 
-AC_OUTPUT([Makefile librna/Makefile sissiz/Makefile levmar/Makefile src/Makefile phyml/Makefile examples/Makefile])
+AC_OUTPUT([Makefile librna/Makefile sissiz/Makefile levmar/Makefile src/Makefile phyml/Makefile examples/Makefile tests/Makefile])
 
 

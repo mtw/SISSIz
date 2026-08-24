@@ -1,4 +1,4 @@
-SUBDIRS=librna sissiz levmar phyml src examples
+SUBDIRS=librna sissiz levmar phyml src examples tests
 
 docu_DATA = INSTALL README AUTHORS COPYING TODO 
  

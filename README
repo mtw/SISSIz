@@ -71,6 +71,11 @@ zero. A model that is not self consistent shows up here as an offset,
 which in a screen means a shifted false positive rate. This takes a few
 minutes; set NULLDIST_REPLICATES to trade runtime against resolution.
 
+All of this runs on GitHub Actions for every push and pull request
+(.github/workflows/ci.yml): the functional suite on Linux and macOS with
+both gcc and clang, a sanitizer build, and make distcheck. The slow
+statistical check runs weekly and on demand.
+
 
 2. USAGE
 ========

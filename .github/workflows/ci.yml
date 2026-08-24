@@ -1,0 +1,99 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, mtw ]
+  pull_request:
+  workflow_dispatch:
+  schedule:
+    # weekly, for the slow statistical check (default branch only)
+    - cron: '0 4 * * 1'
+
+jobs:
+  build:
+    name: ${{ matrix.os }} / ${{ matrix.cc }} ${{ matrix.cflags }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { os: ubuntu-latest, cc: gcc,   cflags: "" }
+          - { os: ubuntu-latest, cc: clang, cflags: "" }
+          # C23 rules for empty parameter lists are what broke the build;
+          # gnu2x rather than gnu23 so gcc 13 accepts it too
+          - { os: ubuntu-latest, cc: gcc,   cflags: "-std=gnu2x" }
+          - { os: ubuntu-latest, cc: clang, cflags: "-std=gnu2x" }
+          # an inherited CFLAGS is what used to suppress the -O2 default
+          - { os: ubuntu-latest, cc: gcc,   cflags: "-Wall" }
+          - { os: macos-latest,  cc: clang, cflags: "" }
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install autotools
+        run: |
+          if [ "$RUNNER_OS" = "macOS" ]; then
+            brew install autoconf automake
+          else
+            sudo apt-get update -qq
+            sudo apt-get install -y autoconf automake
+          fi
+
+      - name: Bootstrap
+        run: autoreconf -i
+
+      - name: Configure
+        run: |
+          if [ -n "${{ matrix.cflags }}" ]; then
+            ./configure CC=${{ matrix.cc }} CFLAGS="${{ matrix.cflags }}"
+          else
+            ./configure CC=${{ matrix.cc }}
+          fi
+
+      - name: Optimisation must be on
+        run: grep -qE '^CFLAGS =.* -O' src/Makefile || { grep '^CFLAGS' src/Makefile; exit 1; }
+
+      - name: Build
+        run: make -j2
+
+      - name: Test
+        run: make check
+
+      - name: Upload test log
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-suite-${{ matrix.os }}-${{ matrix.cc }}
+          path: tests/*.log
+
+  sanitizers:
+    name: address and undefined behaviour
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y autoconf automake
+      - run: autoreconf -i
+      - run: ./configure
+      - run: make check-asan
+
+  distcheck:
+    name: distcheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y autoconf automake
+      - run: autoreconf -i
+      - run: ./configure
+      - run: make distcheck
+
+  nulldist:
+    name: null distribution
+    # Minutes rather than seconds, so not on every push.
+    if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y autoconf automake
+      - run: autoreconf -i
+      - run: ./configure
+      - run: make -j2
+      - run: make check-stats

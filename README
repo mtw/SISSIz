@@ -45,6 +45,33 @@ into a self-contained directory run configure for example like this:
 ./configure --prefix=/opt/programs/SISSIz --datadir=/opt/programs/SISSIz/share
 
 
+1.1 Testing the build
+---------------------
+
+    make check
+
+runs a fast functional suite (about ten seconds): it checks that the
+sampled alignments reproduce the identity and nucleotide composition of
+the input, that --seed makes a run reproducible, that stdout carries the
+result line and nothing else, that unusable input is refused rather than
+looped on, and that out of range options are rejected.
+
+    make check-asan
+
+rebuilds the package in a scratch directory with AddressSanitizer and
+UndefinedBehaviorSanitizer enabled and runs the same suite there, plus a
+sweep of every fixture through every mode. The tree you configured is
+left untouched.
+
+    make check-stats
+
+draws several hundred alignments from SISSIz's own null model, scores
+each of them, and checks that the resulting z-scores are centred on
+zero. A model that is not self consistent shows up here as an offset,
+which in a screen means a shifted false positive rate. This takes a few
+minutes; set NULLDIST_REPLICATES to trade runtime against resolution.
+
+
 2. USAGE
 ========
 
@@ -85,6 +112,14 @@ model. Default is the dinucleotide model.
 
 Produce verbose output that gives an overview of the algorithm,
 intermediate results and statistics. 
+
+--seed
+
+Seed for the random number generator. Given the same seed, the same
+input and the same options, a run reproduces exactly. Without it the
+seed is taken from the system, which is what you want for a screen:
+seeding from the clock alone gives jobs started in the same second the
+same sample set. The seed in use is reported by --verbose.
 
 -t, --tstv
 
@@ -154,16 +189,20 @@ lines start with a # so that they can be filtered easily).
 When calculating z-scores the results are given in one tab separated
 line:
 
-1. Model name (either "sissiz-mono" or "sissiz-di")
-2. Name of the input file name. 
-3. Number of sequences in the input alignment
-4. Mean pairwise identity (MPI) of the input alignment
-5. Average MPI of the sampled alignments.
-6. Standard deviation of the MPIs of the sampled alignments.
-7. RNAalifold consensus Minimum free energy (MFE) of the original alignment.
-8. Average consensus MFE in the sampled alignments
-9. Standard deviation of the consensus MFE in the sampled algnments
-10. z-score calculated from 7. 8. and 9.
+ 1. Model name (either "sissiz-mono" or "sissiz-di")
+ 2. Name of the input file
+ 3. Number of sequences in the input alignment
+ 4. Length of the input alignment in columns
+ 5. Mean pairwise identity (MPI) of the input alignment
+ 6. Average MPI of the sampled alignments
+ 7. Standard deviation of the MPIs of the sampled alignments
+ 8. RNAalifold consensus minimum free energy (MFE) of the original alignment
+ 9. Average consensus MFE in the sampled alignments
+10. Standard deviation of the consensus MFE in the sampled alignments
+11. z-score calculated from 8., 9. and 10.
+
+Field 6 should track field 5 closely; a large gap between them means the
+simulated alignments are not reproducing the divergence of the input.
 
 
 3. EXAMPLES

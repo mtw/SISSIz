@@ -1,0 +1,101 @@
+SISSIz NEWS
+===========
+
+Unreleased
+----------
+
+Correctness
+
+* Pairwise alignments produced a degenerate null model. The two taxon
+  Newick string was written with "%.f", zero decimal places, so any
+  divergence below 0.5 became a zero branch length and every sampled
+  alignment was an exact copy of its ancestor. On 40 pairwise Rfam
+  alignments the sampled mean pairwise identity was 1.0000 against an
+  input mean of 0.7960; correcting it moves the mean z-score by -2.01
+  and raises detection at z < -2 from 47.5% to 70.0%. Every two
+  sequence run made with an earlier version is affected.
+
+* Simulated time only advanced when a proposed substitution was
+  accepted, which pinned the total substitution rate at one per site
+  per unit branch length whatever the composition. Time now advances on
+  every proposal of the uniformised jump chain. Drawing 200 alignments
+  from SISSIz's own null model and scoring them, the mean z-score moves
+  from +0.292 to +0.060 on an AT rich alignment; the offset means the
+  released version reported a shifted false positive rate on skewed
+  windows. Also makes strongly skewed input more than ten times faster.
+
+* A composition skewed enough to zero every triplet exit rate produced
+  a rate matrix of zeros, and the mutation loop never terminated. Such
+  input is now refused with a message and a non-zero exit.
+
+* Ambiguity codes were counted as adenine. The nucleotide map defaulted
+  to zero, so N, R, Y and friends all fed the model an A: a fixture
+  that is 12.5% N reported an A frequency of 0.6. They are now excluded
+  from the model and reported on stderr.
+
+* --nossr did nothing. Site specific rates were installed before the
+  flag was tested, so the second regression used them regardless.
+
+* A leftover debug printf wrote the maximum likelihood tree to stdout
+  whenever kappa was estimated, gluing the Newick string onto the
+  tab separated result line.
+
+* The site rate adjustment divided by zero when every site exceeded the
+  maximum divergence, and the singular matrix check in phyml was
+  written "!Matinv(...)<0", which is always false.
+
+Robustness
+
+* Fixed a heap buffer overflow: MAF sequence names have no length
+  limit but were copied into PHYML's 100 byte name buffer. Reachable
+  from input data with --tstv, and caught by AddressSanitizer.
+
+* The Newick buffer was a fixed 10 kB on the stack; a 400 taxon tree
+  needs about 15 kB. It is now sized from the alignment.
+
+* The rejection sampler skipped freeAln on every rejected alignment and
+  retried forever, leaking about 28 MB per second when --precision was
+  set tighter than the sampler could reach. Rejected samples are freed
+  and the retries are capped.
+
+* The cumulative scans in choosenuc and cchoosetriplet walked past the
+  end of their probability arrays when rounding left the running sum
+  short of the drawn value.
+
+* Out of range values for --num-samples, --precision, --num-regression
+  and --gamma ran to completion and reported nan, or a z-score of zero
+  which reads as "not significant". They are now rejected.
+
+Random numbers
+
+* New --seed option. Given the same seed a run reproduces exactly.
+
+* The default seed now comes from system entropy. time(NULL) has one
+  second resolution, so screens launching many jobs at once drew
+  identical sample sets.
+
+* start_kiss seeded only x, leaving y, z and w on the same trajectory in
+  every run, so different seeds produced streams that differed by
+  nothing but the LCG component. All four state words are now mixed
+  from the seed.
+
+Build and testing
+
+* Fixed compilation with modern compilers: empty parameter lists mean
+  (void) in C23, and a plain inline definition emits no external symbol
+  under C99 rules.
+
+* The bundled convenience archives are linked by path, so an installed
+  ViennaRNA in an earlier -L directory no longer satisfies -lRNA.
+
+* configure appends -O2 when CFLAGS carries no -O flag. An inherited
+  CFLAGS suppresses the -g -O2 that AC_PROG_CC would otherwise supply,
+  which was building the whole package unoptimised and cost a factor of
+  2.3 in runtime.
+
+* New test suite: "make check" for the fast functional tests,
+  "make check-asan" for a sanitizer build, "make check-stats" for the
+  null distribution check. See section 1.1 of the README.
+
+* The output field list in the README was missing the alignment length
+  and so numbered every field after it one too low.

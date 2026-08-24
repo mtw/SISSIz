@@ -464,7 +464,7 @@ struct aln* createAlnEntry(char* name, char* seq, int start, int length, int ful
 
   free(line);
   nrerror("ERROR: Empty alignment file\n");
-   
+  return 0;
 }
 
 
@@ -522,8 +522,8 @@ struct aln* createAlnEntry(char* name, char* seq, int start, int length, int ful
 	/* check if field is not only whitespace */
 	notSpace=0;
 	j=0;
-	while (c=currField[j]!='\0'){
-	  if (!isspace(c)){
+	while ((c=currField[j++])!='\0'){
+	  if (!isspace((unsigned char)c)){
 		notSpace=1;
 		break;
 	  }

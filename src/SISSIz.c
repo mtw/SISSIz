@@ -338,8 +338,9 @@ int main(int argc, char *argv[]){
   case MAF:
     readFunction=&read_maf;
     break;
-  case 0:
+  default:
     nrerror("ERROR: Unknown alignment file format. Use Clustal W or MAF format.\n");
+    exit(1);
   }
 
   readFunction(inputFile, inputAln);

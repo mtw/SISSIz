@@ -92,13 +92,23 @@ void treeML(const struct aln *alignment[], int catGamma, char** treeString, doub
     data = (seq **)mCalloc(n_otu,sizeof(seq *));
   }
 
+  if (L >= T_MAX_SEQ){
+    fprintf(stderr,"ERROR: Alignment of %d columns exceeds the PHYML limit of %d.\n",L,T_MAX_SEQ-1);
+    exit(1);
+  }
+
   for (i=0;i<n_otu;i++){
     data[i] = (seq *)mCalloc(1,sizeof(seq));
     data[i]->len = L;
     data[i]->name = (char *)mCalloc(T_MAX_NAME,sizeof(char));
-    strcpy(data[i]->name,alignment[i]->name);
+    /* PHYML names are T_MAX_NAME bytes; MAF names have no such limit */
+    if (strlen(alignment[i]->name) >= T_MAX_NAME){
+      fprintf(stderr,"WARNING: Truncating sequence name to %d characters for the ML estimate: %s\n",
+              T_MAX_NAME-1,alignment[i]->name);
+    }
+    snprintf(data[i]->name,T_MAX_NAME,"%s",alignment[i]->name);
     data[i]->state = (char *)mCalloc(T_MAX_SEQ,sizeof(char));
-    strcpy(data[i]->state,alignment[i]->seq);
+    snprintf(data[i]->state,T_MAX_SEQ,"%s",alignment[i]->seq);
     data[i]->is_ambigu = NULL;
   }
 
@@ -107,9 +117,9 @@ void treeML(const struct aln *alignment[], int catGamma, char** treeString, doub
     data[2] = (seq *)mCalloc(1,sizeof(seq));
     data[2]->len = L;
     data[2]->name = (char *)mCalloc(T_MAX_NAME,sizeof(char));
-    strcpy(data[2]->name,"duplicated_dummy");
+    snprintf(data[2]->name,T_MAX_NAME,"%s","duplicated_dummy");
     data[2]->state = (char *)mCalloc(T_MAX_SEQ,sizeof(char));
-    strcpy(data[2]->state,alignment[1]->seq);
+    snprintf(data[2]->state,T_MAX_SEQ,"%s",alignment[1]->seq);
     data[2]->is_ambigu = NULL;
     
     n_otu++;

@@ -1,0 +1,17 @@
+# PHYML's model struct and everything hanging off it, allocated once per run
+# when --tstv estimates kappa.  Free_Model() is the matching call but it
+# crashes here: the model is entangled with structures Free_Tree_Lk has
+# already released.  One shot, about 3.4 kB, --tstv only.
+#
+# This excuses leaks anywhere under treeML(), so a new leak introduced in the
+# kappa estimation path would not be caught.  Memory errors there still are:
+# only Memcheck:Leak is suppressed.
+{
+   phyml_allocations_under_treeML
+   Memcheck:Leak
+   match-leak-kinds: definite,indirect
+   fun:calloc
+   fun:mCalloc
+   ...
+   fun:treeML
+}

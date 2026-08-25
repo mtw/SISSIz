@@ -17,10 +17,21 @@ check-asan:
 	cd asan-build && ASAN_OPTIONS=detect_leaks=0 $(MAKE) $(AM_MAKEFLAGS) check
 	rm -rf asan-build $(distdir)
 
+# Same scratch tree trick, with debug info, driving the shipped alignments
+# through valgrind.  Leaks we have accepted live in tests/valgrind.supp.
+check-valgrind:
+	rm -rf valgrind-build $(distdir)
+	$(MAKE) $(AM_MAKEFLAGS) distdir
+	mkdir valgrind-build
+	cd valgrind-build && ../$(distdir)/configure CFLAGS="-O1 -g $(CFLAGS)" >/dev/null
+	cd valgrind-build && $(MAKE) $(AM_MAKEFLAGS)
+	cd valgrind-build && SISSIZ_VALGRIND=1 $(MAKE) $(AM_MAKEFLAGS) check
+	rm -rf valgrind-build $(distdir)
+
 check-stats:
 	cd tests && $(MAKE) $(AM_MAKEFLAGS) check-stats
 
-.PHONY: check-asan check-stats
+.PHONY: check-asan check-valgrind check-stats
 
 docu_DATA = INSTALL README AUTHORS COPYING TODO 
  

@@ -94,8 +94,17 @@ Build and testing
   2.3 in runtime.
 
 * New test suite: "make check" for the fast functional tests,
-  "make check-asan" for a sanitizer build, "make check-stats" for the
-  null distribution check. See section 1.1 of the README.
+  "make check-asan" for a sanitizer build, "make check-valgrind" for a
+  leak sweep, "make check-stats" for the null distribution check. See
+  section 1.1 of the README. All of it runs on GitHub Actions.
+
+* Plugged three leaks valgrind found. rateT2 released the pointer array
+  of its scratch rate matrix but never the 64 rows behind it, losing
+  32 kB per run; treeML never tore down the tree, distance matrix and
+  sequence data PHYML had allocated, losing 357 kB per run with --tstv;
+  and main did not release the Newick buffer or the sampled identities.
+  Nine of the ten shipped invocations are now valgrind clean, the tenth
+  down from 357 kB to 3.4 kB. None of these grew with --num-samples.
 
 * The output field list in the README was missing the alignment length
   and so numbered every field after it one too low.

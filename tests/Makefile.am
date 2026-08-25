@@ -9,7 +9,8 @@ TESTS = \
     ambiguous.sh \
     formats.sh \
     nossr.sh \
-    sanitize.sh
+    sanitize.sh \
+    valgrind.sh
 
 # Slow statistical test, run by "make check-stats" from the top directory.
 STATS_TESTS = nulldist.sh
@@ -30,6 +31,7 @@ check-stats:
 
 EXTRA_DIST = \
     common.sh \
+    valgrind.supp \
     $(TESTS) \
     $(STATS_TESTS) \
     data/multi.aln \

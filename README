@@ -63,6 +63,11 @@ UndefinedBehaviorSanitizer enabled and runs the same suite there, plus a
 sweep of every fixture through every mode. The tree you configured is
 left untouched.
 
+    make check-valgrind
+
+runs the shipped alignments through valgrind, in every mode, and fails on
+any leak or memory error that is not listed in tests/valgrind.supp.
+
     make check-stats
 
 draws several hundred alignments from SISSIz's own null model, scores

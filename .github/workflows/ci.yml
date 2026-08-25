@@ -75,6 +75,16 @@ jobs:
       - run: ./configure
       - run: make check-asan
 
+  valgrind:
+    name: valgrind
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update -qq && sudo apt-get install -y autoconf automake valgrind
+      - run: autoreconf -i
+      - run: ./configure
+      - run: make check-valgrind
+
   distcheck:
     name: distcheck
     runs-on: ubuntu-latest

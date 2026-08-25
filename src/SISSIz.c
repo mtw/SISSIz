@@ -1114,7 +1114,8 @@ int main(int argc, char *argv[]){
   free(ids);
   free(targetIDs);
   free(sampledMFEs);
-  //free(sampledIDs);
+  free(sampledIDs);
+  free(treeString);
 
   if (mono){
     free(Qij);

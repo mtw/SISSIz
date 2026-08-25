@@ -168,6 +168,18 @@ void treeML(const struct aln *alignment[], int catGamma, char** treeString, doub
   *treeString=Write_Tree(tree);
   *kappa=io->mod->kappa;
 
+  /* Same order phyml's own main() uses; Free_Mat does not touch mat->tree,
+     so the tree is released separately afterwards. */
+  if(tree->mat) Free_Mat(tree->mat);
+  Free_Triplet(tree->triplet_struct);
+  Free_Tree_Pars(tree);
+  Free_Tree_Lk(tree);
+  Free_Tree(tree);
+  Free_Cseq(alldata);
+  /* Free_Model(mod) crashes here: the model is entangled with structures
+     Free_Tree_Lk has already released, so it is left alone. */
+  Free_Input(io);
+
 }
 
 seq **Get_Seq_local(seq** data, option *io,  int rw)

@@ -6,6 +6,7 @@ TESTS = \
     output.sh \
     terminate.sh \
     arguments.sh \
+    malformed.sh \
     ambiguous.sh \
     formats.sh \
     nossr.sh \

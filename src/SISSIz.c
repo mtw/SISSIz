@@ -343,7 +343,13 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  readFunction(inputFile, inputAln);
+  /* The readers report a malformed alignment by returning 0.  Ignoring that
+     left inputAln holding ragged sequences, which localPairID then ran off
+     the end of. */
+  if (readFunction(inputFile, inputAln)==0){
+    fprintf(stderr,"ERROR: Could not read an alignment from %s\n",inputFileName);
+    exit(1);
+  }
 
   numAmbiguous=0;
 

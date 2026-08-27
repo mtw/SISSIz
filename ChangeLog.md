@@ -107,7 +107,8 @@ regenerated rather than compared.
 * The output field list in the README omitted the alignment length, so every
   field after it was numbered one too low.
 
-* Raising `--num-samples-regression` is the cheapest way to make a run
-  reproducible: the regression, not the number of sampled alignments, is what
-  makes two runs of the same data disagree. Going from 10 to 50 nearly halves
-  the spread for about 11% more runtime. The default is unchanged at 10.
+* `--num-samples-regression` now defaults to 50 rather than 10. This does not
+  change the typical run-to-run spread of the z-score, which stays near 0.2,
+  but large excursions become rarer: over 80 alignments scored twice, the
+  share of runs differing by more than 2 fell from 6% to 1%, for about 12%
+  more runtime. Nothing further is gained above 50.

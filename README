@@ -155,12 +155,13 @@ alignment. This makes it slower but more accurate.
 Pairwise alignments of 26 different distances are simulated to
 estimate the relationship between observed and genetic distances. For
 each of these points the average of X samples is used, where X is the
-number given here. Default is 10.
+number given here. Default is 50.
 
-Raising it is the cheapest way to tighten reproducibility: the
-regression, not the number of sampled alignments, is what makes two
-runs of the same data disagree. Going from 10 to 50 roughly halves the
-run to run spread of the z-score for about 11 percent more runtime.
+The default was 10 before 0.2.0. Raising it does not change the typical
+run to run spread of the z-score, which stays near 0.2, but it makes
+large excursions rarer: over 80 alignments scored twice, the share of
+runs differing by more than 2 fell from 6 percent to 1 percent, for
+about 12 percent more runtime. There is no further gain above 50.
 
 -r, --nossr
 

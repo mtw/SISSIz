@@ -130,7 +130,7 @@ int main(int argc, char *argv[]){
   int printTree=0; 
   int printU=0;
   int outputFormat=0;
-  int regressionSampleSize=10;
+  int regressionSampleSize=50;
   double regressionPointNum=26;
   double dValues[26]={0.0001,0.001,0.01,0.02,0.05,0.08,
                       0.1,0.15,0.2,0.25,0.3,0.35,0.4,0.45,
@@ -1688,7 +1688,7 @@ void help(void){
   printf("%s\n","  -k, --kappa          Kappa (default: estimated from data)");
   printf("%s\n","  -p, --precision      Set precision of monunucleotide content");
   printf("%s\n","  -m, --num-samples-regression");
-  printf("%s\n","                       Samples per regression point (26 points, default 10)");
+  printf("%s\n","                       Samples per regression point (26 points, default 50)");
   printf("%s\n","  -f, --flanks         Number of flanking 'buffer' sites");
   printf("%s\n","  -r, --nossr          Do not use site specific rates");
   printf("%s\n","  -g, --gamma          Rate categories for the kappa ML estimate (default 4)");

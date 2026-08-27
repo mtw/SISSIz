@@ -1694,8 +1694,11 @@ void help(void){
   printf("%s\n","  -t, --tstv           Consider transitions transversion model");
   printf("%s\n","  -k, --kappa          Kappa (default: estimated from data)");
   printf("%s\n","  -p, --precision      Set precision of monunucleotide content");
-  printf("%s\n","  -m, --num-regression Number of sampled points for regression");
+  printf("%s\n","  -m, --num-samples-regression");
+  printf("%s\n","                       Samples per regression point (26 points, default 10)");
   printf("%s\n","  -f, --flanks         Number of flanking 'buffer' sites");
+  printf("%s\n","  -r, --nossr          Do not use site specific rates");
+  printf("%s\n","  -g, --gamma          Rate categories for the kappa ML estimate (default 4)");
   printf("%s\n","  -v, --verbose        More verbose screen output");
   printf("%s\n","  --seed               Random seed (default: from the system)");
   printf("%s\n","  --dna, --rna         Print Ts (default) or Us");

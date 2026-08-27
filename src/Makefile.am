@@ -22,6 +22,9 @@ SISSIz_SOURCES = \
 
 # Link the bundled convenience archives by path: a plain -lRNA would be
 # satisfied by an installed ViennaRNA in an earlier -L directory.
+# The gengetopt spec that cmdline_sissiz.[ch] are generated from.
+EXTRA_DIST = cmdline_sissiz.ggo
+
 LDADD = \
     $(top_builddir)/librna/libRNA.a \
     $(top_builddir)/levmar/liblevmar.a \

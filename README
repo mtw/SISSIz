@@ -152,12 +152,41 @@ Ts, and Gs. For example if you set to 0.01 you will get almost exactly
 the same monunucleotide content in the simulations as in the original
 alignment. This makes it slower but more accurate.
 
--m, --num-regression
+-m, --num-samples-regression
 
-Pairwise alignments of 25 different distances are simulated to
+Pairwise alignments of 26 different distances are simulated to
 estimate the relationship between observed and genetic distances. For
 each of these points the average of X samples is used, where X is the
 number given here. Default is 10.
+
+Raising it is the cheapest way to make a run reproducible: the
+regression, not the number of sampled alignments, is what makes two
+runs of the same data disagree. Going from 10 to 50 nearly halves the
+run to run spread of the z-score for about 11 percent more runtime.
+
+-r, --nossr
+
+Switch off site specific rates, so that every column evolves at the
+same rate. The simulated alignments then reproduce the overall
+divergence of the input but not its local conservation pattern.
+
+-g, --gamma
+
+Number of rate categories used when kappa is estimated by maximum
+likelihood. Only relevant together with --tstv without --kappa.
+Default is 4.
+
+-o, --outfile
+
+Write the results to this file instead of stdout.
+
+-b, --print-tree
+
+Write the inferred BIONJ tree to aln.tree.
+
+-x, --print-rates
+
+Write the site specific rates to rates.dat. For debugging.
 
 -f, --flanks
 

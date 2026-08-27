@@ -7,6 +7,7 @@ TESTS = \
     terminate.sh \
     arguments.sh \
     malformed.sh \
+    options.sh \
     ambiguous.sh \
     formats.sh \
     nossr.sh \

@@ -1,11 +1,10 @@
-AC_INIT(SISSIz, 0.1.1, wash@tbi.univie.ac.at, SISSIz)
-AM_INIT_AUTOMAKE
+AC_INIT(SISSIz, 0.2.0, wash@tbi.univie.ac.at, SISSIz)
+AM_INIT_AUTOMAKE([foreign])
 
 AC_PROG_CC
 
-# AC_PROG_CC only supplies its default "-g -O2" when CFLAGS is unset.  A
-# CFLAGS inherited from the environment (say a bare -I) would otherwise
-# build the whole package unoptimised.
+# AC_PROG_CC only supplies -g -O2 when CFLAGS is unset, so add -O2 unless
+# the caller asked for an optimisation level of their own.
 AS_CASE([" $CFLAGS "],
         [*" -O"*], [],
         [CFLAGS="$CFLAGS -O2"])

@@ -19,11 +19,10 @@ jobs:
         include:
           - { os: ubuntu-latest, cc: gcc,   cflags: "" }
           - { os: ubuntu-latest, cc: clang, cflags: "" }
-          # C23 rules for empty parameter lists are what broke the build;
-          # gnu2x rather than gnu23 so gcc 13 accepts it too
+          # C23 parameter-list rules; gnu2x rather than gnu23 so gcc 13 takes it
           - { os: ubuntu-latest, cc: gcc,   cflags: "-std=gnu2x" }
           - { os: ubuntu-latest, cc: clang, cflags: "-std=gnu2x" }
-          # an inherited CFLAGS is what used to suppress the -O2 default
+          # an inherited CFLAGS must not suppress the -O2 default
           - { os: ubuntu-latest, cc: gcc,   cflags: "-Wall" }
           - { os: macos-latest,  cc: clang, cflags: "" }
     steps:
@@ -97,7 +96,7 @@ jobs:
 
   nulldist:
     name: null distribution
-    # Minutes rather than seconds, so not on every push.
+    # Minutes rather than seconds, so not on every push
     if: github.event_name == 'workflow_dispatch' || github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:

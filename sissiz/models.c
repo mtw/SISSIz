@@ -847,7 +847,7 @@ double **rateT2(){
     if(verboseRate==1 || verboseQMatrix==1)
         fprintf(stderr, "Q2(nk=2): sum(diagonal.values*pi):expected number of substitutions = %f\n", dig);
 		
-	/* the row blocks were never released, only the pointer array */
+	/* release the scratch matrix */
 	for(i=0;i<64;i++) free(RT2ij[i]);
 	free(RT2ij);
 	return(QT2ij);

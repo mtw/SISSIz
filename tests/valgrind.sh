@@ -1,7 +1,6 @@
 #!/bin/sh
-# Run the shipped alignments through valgrind and fail on any leak that is
-# not in valgrind.supp.  Skips unless valgrind is installed and the binary
-# was built with debug info; "make check-valgrind" arranges both.
+# Run the shipped alignments through valgrind and fail on any leak not
+# listed in valgrind.supp.  Use "make check-valgrind".
 . "${srcdir:-.}/common.sh"
 
 if [ "${SISSIZ_VALGRIND:-0}" != "1" ]; then
@@ -13,9 +12,8 @@ if ! command -v valgrind >/dev/null 2>&1; then
   exit 77
 fi
 
-# Absolute paths: the checks below run from a scratch directory, because
-# --print-tree and --print-rates write aln.tree and rates.dat into the
-# current directory and would otherwise litter the build tree.
+# Absolute paths: the checks run from a scratch directory, since
+# --print-tree and --print-rates write into the current one.
 SUPP=$(cd "$(dirname "${srcdir:-.}/valgrind.supp")" && pwd)/valgrind.supp
 BIN=$(cd "$(dirname "$SISSIZ")" && pwd)/$(basename "$SISSIZ")
 DATADIR=$(cd "$DATA" && pwd)

@@ -1,7 +1,6 @@
 #!/bin/sh
 # Inputs the model cannot handle must be rejected, not spun on forever.
-# Deliberately avoids --seed so that a binary lacking it still reaches the
-# code under test instead of bailing out on the command line.
+# Avoids --seed so the run reaches the code under test either way.
 . "${srcdir:-.}/common.sh"
 
 status=0

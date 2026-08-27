@@ -24,8 +24,8 @@ while [ "$k" -le "$M" ]; do
   k=$((k+1))
 done
 
-# A draw can come out too skewed for the model to score; that is a legitimate
-# refusal, so skip those and insist only that most replicates survive.
+# A draw can come out too skewed to score, which is a legitimate refusal;
+# require only that most replicates survive.
 : > "$work/z.txt"
 k=1; used=0; skipped=0
 while [ "$k" -le "$M" ]; do

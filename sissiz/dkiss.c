@@ -16,9 +16,7 @@ unsigned int kiss(void);
 /******************************************************************/
 /*  kickstart the kiss random number generator                    */
 /******************************************************************/
-/* Mix the seed into every state word.  Seeding only x left y, z and w
-   on the same trajectory in every run, so streams from different seeds
-   differed by nothing but the LCG component. */
+/* Derive all four state words from the seed. */
 static unsigned int splitmix(unsigned int *state)
 {
      unsigned int r;
@@ -40,9 +38,9 @@ void start_kiss(unsigned int seed)
      w = splitmix(&state);
      carry = splitmix(&state) >> 30;
 
-     if (y == 0) y = 362436069u;   /* the xorshift step needs y != 0 */
+     if (y == 0) y = 362436069u;   /* xorshift requires y != 0 */
 
-     /* discard the first outputs so the state is well mixed */
+     /* mix the state */
      for (k = 0; k < 16; k++) kiss();
 }
 /******************************************************************/

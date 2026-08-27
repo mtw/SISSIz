@@ -50,36 +50,34 @@ into a self-contained directory run configure for example like this:
 
     make check
 
-runs a fast functional suite (about ten seconds): it checks that the
-sampled alignments reproduce the identity and nucleotide composition of
-the input, that --seed makes a run reproducible, that stdout carries the
-result line and nothing else, that unusable input is refused rather than
-looped on, and that out of range options are rejected.
+Functional tests, about ten seconds. Checks that the sampled alignments
+reproduce the identity and nucleotide composition of the input, that
+--seed makes a run reproducible, that stdout carries the result line and
+nothing else, that unusable input is refused, and that out of range
+options are rejected.
 
     make check-asan
 
-rebuilds the package in a scratch directory with AddressSanitizer and
-UndefinedBehaviorSanitizer enabled and runs the same suite there, plus a
-sweep of every fixture through every mode. The tree you configured is
-left untouched.
+Rebuilds in a scratch directory under AddressSanitizer and
+UndefinedBehaviorSanitizer and runs the suite there, plus a sweep of
+every fixture through every mode. The configured tree is left alone.
 
     make check-valgrind
 
-runs the shipped alignments through valgrind, in every mode, and fails on
-any leak or memory error that is not listed in tests/valgrind.supp.
+Runs the shipped alignments through valgrind in every mode and fails on
+any leak or memory error not listed in tests/valgrind.supp.
 
     make check-stats
 
-draws several hundred alignments from SISSIz's own null model, scores
-each of them, and checks that the resulting z-scores are centred on
-zero. A model that is not self consistent shows up here as an offset,
-which in a screen means a shifted false positive rate. This takes a few
-minutes; set NULLDIST_REPLICATES to trade runtime against resolution.
+Draws several hundred alignments from SISSIz's own null model, scores
+them, and checks that the z-scores are centred on zero. An offset here
+means a shifted false positive rate in a screen. Takes a few minutes;
+NULLDIST_REPLICATES trades runtime against resolution.
 
 All of this runs on GitHub Actions for every push and pull request
 (.github/workflows/ci.yml): the functional suite on Linux and macOS with
-both gcc and clang, a sanitizer build, and make distcheck. The slow
-statistical check runs weekly and on demand.
+gcc and clang, a sanitizer build, and make distcheck. The statistical
+check runs weekly and on demand.
 
 
 2. USAGE
@@ -125,11 +123,11 @@ intermediate results and statistics.
 
 --seed
 
-Seed for the random number generator. Given the same seed, the same
-input and the same options, a run reproduces exactly. Without it the
-seed is taken from the system, which is what you want for a screen:
-seeding from the clock alone gives jobs started in the same second the
-same sample set. The seed in use is reported by --verbose.
+Seed for the random number generator. The same seed on the same input
+with the same options reproduces a run exactly. Without it the seed is
+taken from the system; seeding from the clock alone gives jobs started
+in the same second the same sample set. --verbose reports the seed in
+use.
 
 -t, --tstv
 
@@ -159,9 +157,9 @@ estimate the relationship between observed and genetic distances. For
 each of these points the average of X samples is used, where X is the
 number given here. Default is 10.
 
-Raising it is the cheapest way to make a run reproducible: the
+Raising it is the cheapest way to tighten reproducibility: the
 regression, not the number of sampled alignments, is what makes two
-runs of the same data disagree. Going from 10 to 50 nearly halves the
+runs of the same data disagree. Going from 10 to 50 roughly halves the
 run to run spread of the z-score for about 11 percent more runtime.
 
 -r, --nossr

@@ -1,7 +1,6 @@
 #!/bin/sh
 # Sweep every fixture through every mode and fail on any sanitizer report.
-# Skips unless the binary was built with -fsanitize; "make check-asan" does
-# that build for you.
+# Use "make check-asan".
 . "${srcdir:-.}/common.sh"
 
 if ! nm "$SISSIZ" 2>/dev/null | grep -q '__asan\|__ubsan'; then

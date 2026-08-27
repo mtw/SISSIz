@@ -1,9 +1,7 @@
 SUBDIRS=librna sissiz levmar phyml src examples tests
 
-# Rebuild in a scratch tree with the sanitizers on and run the suite there,
-# so the normal build in this directory is left alone.  LeakSanitizer is on
-# by default on Linux and would flag the one shot allocations SISSIz holds
-# until exit; those are noise, not defects.
+# Sanitizer build in a scratch tree, leaving the normal build here alone.
+# Leak checking is off: the allocations held until exit are noise.
 SANITIZERS = -fsanitize=address,undefined
 
 check-asan:
@@ -17,8 +15,8 @@ check-asan:
 	cd asan-build && ASAN_OPTIONS=detect_leaks=0 $(MAKE) $(AM_MAKEFLAGS) check
 	rm -rf asan-build $(distdir)
 
-# Same scratch tree trick, with debug info, driving the shipped alignments
-# through valgrind.  Leaks we have accepted live in tests/valgrind.supp.
+# Scratch tree with debug info, run through valgrind.  Accepted leaks are
+# listed in tests/valgrind.supp.
 check-valgrind:
 	rm -rf valgrind-build $(distdir)
 	$(MAKE) $(AM_MAKEFLAGS) distdir
@@ -33,8 +31,8 @@ check-stats:
 
 .PHONY: check-asan check-valgrind check-stats
 
-docu_DATA = INSTALL README AUTHORS COPYING TODO 
+docu_DATA = INSTALL README AUTHORS COPYING TODO ChangeLog.md
  
-EXTRA_DIST = INSTALL README AUTHORS COPYING TODO 
+EXTRA_DIST = INSTALL README AUTHORS COPYING TODO ChangeLog.md
 
 docudir = $(pkgdatadir)

@@ -101,7 +101,7 @@ void treeML(const struct aln *alignment[], int catGamma, char** treeString, doub
     data[i] = (seq *)mCalloc(1,sizeof(seq));
     data[i]->len = L;
     data[i]->name = (char *)mCalloc(T_MAX_NAME,sizeof(char));
-    /* PHYML names are T_MAX_NAME bytes; MAF names have no such limit */
+    /* phyml names are T_MAX_NAME bytes, MAF names are unbounded */
     if (strlen(alignment[i]->name) >= T_MAX_NAME){
       fprintf(stderr,"WARNING: Truncating sequence name to %d characters for the ML estimate: %s\n",
               T_MAX_NAME-1,alignment[i]->name);
@@ -168,16 +168,16 @@ void treeML(const struct aln *alignment[], int catGamma, char** treeString, doub
   *treeString=Write_Tree(tree);
   *kappa=io->mod->kappa;
 
-  /* Same order phyml's own main() uses; Free_Mat does not touch mat->tree,
-     so the tree is released separately afterwards. */
+  /* teardown order taken from phyml's own main(); Free_Mat leaves
+     mat->tree alone */
   if(tree->mat) Free_Mat(tree->mat);
   Free_Triplet(tree->triplet_struct);
   Free_Tree_Pars(tree);
   Free_Tree_Lk(tree);
   Free_Tree(tree);
   Free_Cseq(alldata);
-  /* Free_Model(mod) crashes here: the model is entangled with structures
-     Free_Tree_Lk has already released, so it is left alone. */
+  /* Free_Model(mod) is unsafe here: it touches structures Free_Tree_Lk
+     has already released */
   Free_Input(io);
 
 }

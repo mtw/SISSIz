@@ -614,8 +614,7 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
          ancestorseq[i]=seq[i];
     /*************Time*****************************************/
     rsum =0.0;	
-	/* Proposals are drawn at the uniformised rate of the jump chain that
-	   Pij describes, not at the rate of accepted substitutions. */
+	/* proposal rate of the uniformised jump chain */
 	rsum = -seqlen*PijUnifRate;
 	if(verbosewaiting==1) fprintf(stderr,"\n rsum1= %f\n",rsum);
 	/*************Time*****************************************/
@@ -675,8 +674,7 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
 	     substitutions++;
 	     seq=changeseq(seq,secpos,mutation);
 	 } 
-	 /* A self transition is a virtual event of the uniformised chain and
-	    consumes waiting time like any other, so advance t either way. */
+	 /* self transitions are virtual events and consume waiting time too */
 	 t += timeoverall(rsum);
 	 /********************************************************/
     }	
@@ -999,8 +997,7 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
     if(Qij[j*4+j]<maxwait) maxwait=Qij[j*4+j];
   }
   maxwait=-maxwait;
-  /* Proposals are drawn at the uniformised rate of the jump chain that
-     probmutqx describes, not at the rate of accepted substitutions. */
+  /* proposal rate of the uniformised jump chain */
   rsum=-seqlen*maxwait;
   /*************Time*****************************************/
   t    = timeoverall(rsum);
@@ -1023,8 +1020,7 @@ void MutateSequenceInd(char *seq, double len, double *Qij){
 	    substitutions++;
 		seq=changeseq(seq,secpos,mutation);
 	  }	
-	  /* A self transition is a virtual event of the uniformised chain and
-	     consumes waiting time like any other, so advance t either way. */
+	  /* self transitions are virtual events and consume waiting time too */
 	  t+=timeoverall(rsum);
       free(probmutij);
       /*********************************/
@@ -1393,7 +1389,7 @@ int selsite(double rat[], double rsum, double *proselsite){
               dummy += probmutij[j];
               mutation=j;
               ++j;
-            }while(x>=dummy && j<4);   /* rounding can leave dummy just short of x */
+            }while(x>=dummy && j<4);   /* rounding can leave dummy short of x */
 
             return(mutation);
 	 }
@@ -1467,8 +1463,7 @@ double** computePij(double **QT2ij){
   }
   maxwait=-maxwait;
 
-  /* Largest triplet exit rate; the jump chain below divides by it.
-     Published so callers can reject a degenerate rate matrix. */
+  /* largest triplet exit rate; the jump chain divides by it */
   PijUnifRate=maxwait;
 
   for (t=0;t<64;t++){
@@ -1568,7 +1563,7 @@ int cchoosetriplet(double *probmutij_trip){
              dummy =  dummy + probmutij_trip[j];
              if(probmutij_trip[j] != 0) tripletmutation=j;
              ++j;
-           }while(x>=dummy && j<64) ;   /* rounding can leave dummy just short of x */
+           }while(x>=dummy && j<64) ;   /* rounding can leave dummy short of x */
 		   
            /*free(probmutij_trip);*/
 		   

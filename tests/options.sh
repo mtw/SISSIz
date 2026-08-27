@@ -1,14 +1,12 @@
 #!/bin/sh
-# The help screen and the option parser must agree.  --help used to advertise
-# --num-regression, which the parser did not accept, while --nossr and --gamma
-# worked but were undocumented.
+# The help screen and the option parser must agree, in both directions.
 . "${srcdir:-.}/common.sh"
 
 GGO="${srcdir:-.}/../src/cmdline_sissiz.ggo"
 status=0
 
-# --print-tree and --print-rates open their output files while the options
-# are parsed, before any input is read, so probe from a scratch directory.
+# --print-tree and --print-rates open their files while the options are
+# parsed, so probe from a scratch directory.
 BIN=$(cd "$(dirname "$SISSIZ")" && pwd)/$(basename "$SISSIZ")
 work=$(mktemp -d "${TMPDIR:-/tmp}/sissiz-opt.XXXXXX") || fail "cannot create work directory"
 trap 'rm -rf "$work"' EXIT INT TERM

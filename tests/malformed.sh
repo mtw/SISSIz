@@ -1,7 +1,6 @@
 #!/bin/sh
-# Malformed input must be refused with a message and a non-zero exit, never
-# a crash.  The readers signal failure by returning 0; main used to ignore
-# that and walk off the end of ragged sequences.
+# Malformed input must be refused with a message and a non-zero exit,
+# never a crash or a hang.
 . "${srcdir:-.}/common.sh"
 
 work=$(mktemp -d "${TMPDIR:-/tmp}/sissiz-bad.XXXXXX") || fail "cannot create work directory"

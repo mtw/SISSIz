@@ -36,7 +36,7 @@
 #include "cmdline_sissiz.h"
 #include "treeML.h"
 
-/* Consecutive rejected samples tolerated before giving up on --precision */
+/* consecutive rejected samples before giving up on --precision */
 #define MAX_REJECTED 10000
 
 /* Function prototypes */
@@ -253,9 +253,6 @@ int main(int argc, char *argv[]){
     exit(EXIT_SUCCESS);
   }
 
-  /* Out of range values used to run to completion and report nan or a
-     z-score of zero, which reads as "not significant" in a screen. */
-
   if (simulateOnly){
     if (numSamples<1){
       fprintf(stderr,"ERROR: --num-samples must be at least 1.\n");
@@ -343,9 +340,7 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  /* The readers report a malformed alignment by returning 0.  Ignoring that
-     left inputAln holding ragged sequences, which localPairID then ran off
-     the end of. */
+  /* the readers return 0 on a malformed alignment */
   if (readFunction(inputFile, inputAln)==0){
     fprintf(stderr,"ERROR: Could not read an alignment from %s\n",inputFileName);
     exit(1);
@@ -381,8 +376,7 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  /* Room for the Newick string: every taxon contributes its name, a
-     branch length and the surrounding punctuation. */
+  /* room for a name, a branch length and punctuation per taxon */
   treeStringSize=64;
   for (i=0;i<N;i++) treeStringSize+=strlen(inputAln[i]->name)+32;
   treeString=(char*)space(treeStringSize);
@@ -442,8 +436,8 @@ int main(int argc, char *argv[]){
   if (args.seed_given){
     rngSeed=(unsigned int)args.seed_arg;
   } else {
-    /* time(NULL) alone has one second resolution, so screens that launch
-       many jobs at once would share a seed and thus a sample set. */
+    /* time(NULL) has one second resolution, so parallel jobs would
+       otherwise share a seed */
     FILE *urandom=fopen("/dev/urandom","r");
     if (urandom==NULL || fread(&rngSeed,sizeof(rngSeed),1,urandom)!=1){
       rngSeed=(unsigned int)time(NULL)^((unsigned int)getpid()<<16);
@@ -570,8 +564,7 @@ int main(int argc, char *argv[]){
     maxRate=PijUnifRate;
   }
 
-  /* A composition so skewed that every exit rate vanishes gives a rate
-     matrix of zeros; the simulation would then never terminate. */
+  /* an all zero rate matrix would leave the mutation loop spinning */
   if (!(maxRate>0.0)){
     fprintf(stderr,"ERROR: Degenerate rate matrix, the nucleotide composition of %s is too skewed to simulate.\n",inputFileName);
     exit(1);
@@ -683,7 +676,7 @@ int main(int argc, char *argv[]){
         }
       }
 
-      /* Every site capped leaves nothing to spread the surplus over. */
+      /* nothing to spread the surplus over if every site is capped */
       if (countTooDiverged<L){
         adjustment=difference/(double)(L-countTooDiverged);
       } else {
@@ -863,7 +856,7 @@ int main(int argc, char *argv[]){
       }
     }
 
-    /* Whichever run got this far built the tree we simulate along. */
+    /* this run built the tree we simulate along */
     break;
 
   }

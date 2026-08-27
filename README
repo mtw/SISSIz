@@ -31,7 +31,7 @@ conserved/stable than expected by chance.
 This packages uses the GNU configuration and installation
 system and thus compilation and installation should be easy:
 
-cd /somedir/SISSIz-0.1
+cd /somedir/SISSIz-VERSION
 ./configure
 make
 make install (as root)

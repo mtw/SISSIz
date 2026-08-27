@@ -7,13 +7,19 @@
 GGO="${srcdir:-.}/../src/cmdline_sissiz.ggo"
 status=0
 
+# --print-tree and --print-rates open their output files while the options
+# are parsed, before any input is read, so probe from a scratch directory.
+BIN=$(cd "$(dirname "$SISSIZ")" && pwd)/$(basename "$SISSIZ")
+work=$(mktemp -d "${TMPDIR:-/tmp}/sissiz-opt.XXXXXX") || fail "cannot create work directory"
+trap 'rm -rf "$work"' EXIT INT TERM
+
 help=$("$SISSIZ" -h 2>&1)
 [ -n "$help" ] || fail "no help output"
 
 # every long option the help advertises must be accepted by the parser
 for o in $(printf '%s\n' "$help" | grep -oE '\-\-[a-zA-Z][a-zA-Z-]*' | sort -u); do
   # </dev/null: with no file argument SISSIz would read stdin and block
-  err=$(run_limited 20 "$SISSIZ" "$o" </dev/null 2>&1 >/dev/null)
+  err=$(cd "$work" && run_limited 20 "$BIN" "$o" </dev/null 2>&1 >/dev/null)
   case "$err" in
     *unrecognized*) echo "FAIL: help advertises $o but the parser rejects it" >&2; status=1;;
     *) note "$o accepted";;

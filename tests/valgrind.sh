@@ -13,7 +13,14 @@ if ! command -v valgrind >/dev/null 2>&1; then
   exit 77
 fi
 
-SUPP="${srcdir:-.}/valgrind.supp"
+# Absolute paths: the checks below run from a scratch directory, because
+# --print-tree and --print-rates write aln.tree and rates.dat into the
+# current directory and would otherwise litter the build tree.
+SUPP=$(cd "$(dirname "${srcdir:-.}/valgrind.supp")" && pwd)/valgrind.supp
+BIN=$(cd "$(dirname "$SISSIZ")" && pwd)/$(basename "$SISSIZ")
+DATADIR=$(cd "$DATA" && pwd)
+EXAMPLES=$(cd "$DATA/../../examples" && pwd)
+
 work=$(mktemp -d "${TMPDIR:-/tmp}/sissiz-vg.XXXXXX") || fail "cannot create work directory"
 trap 'rm -rf "$work"' EXIT INT TERM
 
@@ -21,9 +28,9 @@ status=0
 check() {
   desc=$1; shift
   log="$work/$(printf '%s' "$desc" | tr ' /.=-' '_____').log"
-  valgrind --leak-check=full --show-leak-kinds=definite,indirect \
+  ( cd "$work" && valgrind --leak-check=full --show-leak-kinds=definite,indirect \
            --suppressions="$SUPP" --log-file="$log" \
-           "$SISSIZ" "$@" >/dev/null 2>&1
+           "$BIN" "$@" >/dev/null 2>&1 )
   def=$(sed -n 's/.*definitely lost: *\([0-9,]*\) bytes.*/\1/p' "$log" | tail -1 | tr -d ,)
   ind=$(sed -n 's/.*indirectly lost: *\([0-9,]*\) bytes.*/\1/p' "$log" | tail -1 | tr -d ,)
   bad=$(grep -cE '^==[0-9]+== (Invalid|Conditional jump|Use of uninitialised|Mismatched|Source and destination)' "$log")
@@ -36,14 +43,14 @@ check() {
   fi
 }
 
-check "rRNA di"        --seed 1 -n 5 "$DATA/../../examples/rRNA.aln"
-check "rRNA mono"      --seed 1 -i -n 5 "$DATA/../../examples/rRNA.aln"
-check "rRNA tstv"      --seed 1 -t -n 3 "$DATA/../../examples/rRNA.aln"
-check "genomic maf"    --seed 1 -n 5 "$DATA/../../examples/genomic.maf"
-check "pair"           --seed 1 -n 5 "$DATA/pair.aln"
-check "ambiguous"      --seed 1 -n 5 "$DATA/ambiguous.aln"
-check "degenerate"     --seed 1 -n 5 "$DATA/degenerate.aln"
-check "simulate"       --seed 1 -s -n 3 "$DATA/multi.aln"
-check "tree and rates" --seed 1 -b -x -n 5 "$DATA/multi.aln"
-check "many samples"   --seed 2 -n 100 "$DATA/multi.aln"
+check "rRNA di"        --seed 1 -n 5 "$EXAMPLES/rRNA.aln"
+check "rRNA mono"      --seed 1 -i -n 5 "$EXAMPLES/rRNA.aln"
+check "rRNA tstv"      --seed 1 -t -n 3 "$EXAMPLES/rRNA.aln"
+check "genomic maf"    --seed 1 -n 5 "$EXAMPLES/genomic.maf"
+check "pair"           --seed 1 -n 5 "$DATADIR/pair.aln"
+check "ambiguous"      --seed 1 -n 5 "$DATADIR/ambiguous.aln"
+check "degenerate"     --seed 1 -n 5 "$DATADIR/degenerate.aln"
+check "simulate"       --seed 1 -s -n 3 "$DATADIR/multi.aln"
+check "tree and rates" --seed 1 -b -x -n 5 "$DATADIR/multi.aln"
+check "many samples"   --seed 2 -n 100 "$DATADIR/multi.aln"
 exit $status

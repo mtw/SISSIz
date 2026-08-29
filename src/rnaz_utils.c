@@ -216,6 +216,10 @@ int read_maf(FILE *clust, struct aln *alignedSeqs[]) {
 
   alignedSeqs[num_seq] = NULL;
 
+  if (num_seq == 0) {
+	return 0;
+  }
+
   n = strlen(alignedSeqs[0]->seq); 
   for (nn=1; nn<num_seq; nn++) {
 	if (strlen(alignedSeqs[nn]->seq)!=n) {

@@ -83,6 +83,8 @@ int main(int argc, char *argv[]){
   double zScore;
   double maxRate;
   unsigned long numAmbiguous;
+  unsigned int numRenamed;
+  int renamed=0;
   unsigned int rejected;
   unsigned int rngSeed;
  
@@ -344,6 +346,25 @@ int main(int argc, char *argv[]){
   if (readFunction(inputFile, inputAln)==0){
     fprintf(stderr,"ERROR: Could not read an alignment from %s\n",inputFileName);
     exit(1);
+  }
+
+  /* Newick has no quoting here, so a name carrying its syntax would produce
+     a tree the reader cannot parse.  Genomic names like chr1:100-200 are
+     common, so map the offending characters rather than refuse the file. */
+  numRenamed=0;
+  for (i=0; inputAln[i]!=NULL; i++){
+    tmpSeq=inputAln[i]->name;
+    for (j=0; tmpSeq[j]; j++){
+      if (strchr("(),:;'[]", tmpSeq[j])!=NULL){
+        tmpSeq[j]='_';
+        renamed=1;
+      }
+    }
+    if (renamed){ numRenamed++; renamed=0; }
+  }
+
+  if (numRenamed>0){
+    fprintf(stderr,"WARNING: Replaced Newick syntax characters in %u sequence name(s) with '_'.\n",numRenamed);
   }
 
   numAmbiguous=0;

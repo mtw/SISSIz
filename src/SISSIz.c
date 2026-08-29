@@ -266,7 +266,7 @@ int main(int argc, char *argv[]){
   }
 
   if (regressionSampleSize<1){
-    fprintf(stderr,"ERROR: --num-regression must be at least 1.\n");
+    fprintf(stderr,"ERROR: --num-samples-regression must be at least 1.\n");
     exit(1);
   }
 

@@ -24,8 +24,12 @@ z = --------------------------------------
 Negative z-scores indicate secondary structures that are more
 conserved/stable than expected by chance. 
 
+Version 0.2.0 corrects several bugs that change the numbers SISSIz
+reports, pairwise alignments most of all. Results from earlier versions
+are not comparable and should be regenerated. See ChangeLog.md.
 
-1. INSTALLATION
+
+2. INSTALLATION
 ===============
 
 This packages uses the GNU configuration and installation
@@ -45,7 +49,7 @@ into a self-contained directory run configure for example like this:
 ./configure --prefix=/opt/programs/SISSIz --datadir=/opt/programs/SISSIz/share
 
 
-1.1 Testing the build
+2.1 Testing the build
 ---------------------
 
     make check
@@ -80,21 +84,28 @@ gcc and clang, a sanitizer build, and make distcheck. The statistical
 check runs weekly and on demand.
 
 
-2. USAGE
+3. USAGE
 ========
 
-2.1 Input alignment
+3.1 Input alignment
 -------------------
 
-The input alignment must be in CLUSTAL W format or MAF format.
+The input alignment must be in CLUSTAL W format or MAF format, hold at
+least two sequences, and all sequences must be of the same length.
+
+Characters other than A, C, G, T and U are left out when the mono- and
+dinucleotide content is estimated; SISSIz reports on stderr how many
+were dropped. Gaps are not simulated. They are taken from the input and
+put back into the same columns of every sampled alignment, so the gap
+pattern of the input is preserved exactly.
 
 
-2.2 Program call
+3.2 Program call
 ----------------
 
 SISSIz [OPTIONS] [FILE]
 
-2.3 Options
+3.3 Options
 -----------
 
 Most options have a long (--long) and a short form (-x).
@@ -108,7 +119,8 @@ carried out and the alignments is just randomized.
 
 Number of samples that are used for calculating the z-score. In
 simulation mode, the number of random alignments to be
-produced. Default is 100 for z-scores, and 1 for simulations.
+produced. Default is 100 for z-scores, and 1 for simulations. A z-score
+needs a standard deviation, so fewer than two samples is refused.
 
 -i --mono
 -d --di
@@ -148,7 +160,9 @@ the simulated alignment. In other word, it is the square-root of the
 sum of the squared differences between the four frequencies of As, Cs,
 Ts, and Gs. For example if you set to 0.01 you will get almost exactly
 the same monunucleotide content in the simulations as in the original
-alignment. This makes it slower but more accurate.
+alignment. This makes it slower but more accurate. A value the sampler
+cannot reach is given up on after 10000 rejected samples rather than
+resampling forever.
 
 -m, --num-samples-regression
 
@@ -215,7 +229,7 @@ Print version information.
 
 
 
-2.4 Output
+3.4 Output
 ----------
 
 In simulation mode one or more alignmnts in CLUSTAL W or MAF format
@@ -243,7 +257,33 @@ Field 6 should track field 5 closely; a large gap between them means the
 simulated alignments are not reproducing the divergence of the input.
 
 
-3. EXAMPLES
+3.5 Exit status
+---------------
+
+SISSIz exits 0 on success and 1 on error, with a message on stderr. In a
+genome wide screen the windows that fail are usually best skipped rather
+than retried. The errors that come from the data rather than the command
+line are:
+
+  Degenerate rate matrix, the nucleotide composition of ... is too
+  skewed to simulate
+      Every substitution rate in the model vanishes, so there is no
+      background to sample from. Typical of homopolymer or two letter
+      windows.
+
+  Could not read an alignment from ...
+  Sequences are of unequal length
+      The input is malformed.
+
+  Could not reach a mononucleotide content within ...
+      --precision is tighter than the sampler can reach. Raise it.
+
+  Negative logarithm while calculating pairwise distance
+      The sequences are too diverged for the fitted curve. Raising
+      --flanks can help.
+
+
+4. EXAMPLES
 ===========
 
 SISSIz --simulate --tstv -n 1000 test.aln
@@ -267,7 +307,7 @@ SISSIz --verbose --tstv --precision 0.05 -n 1000 test.aln
   accurate settings.
 
 
-4. LITERATURE
+5. LITERATURE
 =============
 
 SISSIz and the new dinucleotide randomization procedure is described in:
@@ -301,7 +341,7 @@ Secondary structure prediction for aligned RNA sequences.
 J Mol Biol (2002) 319:1059-66. 
 
 
-5. CONTACT
+6. CONTACT
 ==========
 
 Stefan Washietl <wash@tbi.univie.ac.at>

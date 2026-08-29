@@ -107,6 +107,12 @@ regenerated rather than compared.
 * The output field list in the README omitted the alignment length, so every
   field after it was numbered one too low.
 
+* The per-sample bookkeeping re-evaluated `strlen` in two loop conditions,
+  once per dinucleotide counted and once per column when restoring gaps.
+  Hoisting them makes simulation about 25% faster for the mononucleotide
+  model and about 10% for the dinucleotide model on long alignments, with
+  bit-identical output.
+
 * `--num-samples-regression` now defaults to 50 rather than 10. This does not
   change the typical run-to-run spread of the z-score, which stays near 0.2,
   but large excursions become rarer: over 80 alignments scored twice, the

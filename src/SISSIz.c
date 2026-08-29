@@ -1268,7 +1268,7 @@ void countFreqsMono(const struct aln *alignment[], double freqs[]){
 
 void countFreqsDi(const struct aln *alignment[], double freqs[][4]){
 
-  int i,j,k;
+  int i,j,k,len;
   char* currSeq;
   char c1,c2;
   unsigned long counter;
@@ -1285,8 +1285,9 @@ void countFreqsDi(const struct aln *alignment[], double freqs[][4]){
   for (i=0; alignment[i]!=NULL; i++){
 
     currSeq=alignment[i]->seq;
+    len=strlen(currSeq);
 
-    for (k=0; k<strlen(currSeq)-1;k++){
+    for (k=0; k+1<len; k++){
       c1=currSeq[k];
       c2=currSeq[k+1];
 
@@ -1580,7 +1581,7 @@ void printAlnFasta(FILE *out, const struct aln* AS[],int printU){
 
 void reintroduceGaps(const struct aln* origAln[], struct aln* sampledAln[]){
 
-  int i,j,k;
+  int i,j,k,len;
 
   char* tmpSeq;
   char* tmpName;
@@ -1609,8 +1610,9 @@ void reintroduceGaps(const struct aln* origAln[], struct aln* sampledAln[]){
 
         origSeq=origAln[i]->seq;
         sampledSeq=sampledAln[i]->seq;
+        len=strlen(origSeq);
 
-        for (k=0;k<strlen(origSeq);k++){
+        for (k=0;k<len;k++){
           if (origSeq[k]=='-'){
             sampledSeq[k]='-';
           }

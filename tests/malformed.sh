@@ -18,9 +18,16 @@ printf '##maf version=1\na score=0\n\n' > "$work/emptyblock.maf"
 printf '##maf version=1\na score=0\na score=1\ns s1.c1 1 8 + 99 ACGTACGT\ns s2.c1 1 8 + 99 ACGTACGA\n\n' > "$work/twoblocks.maf"
 printf 'CLUSTAL W(1.81)\n\n\na   \001\002\003\004\005\006\n' > "$work/control.aln"
 
+# more sequences than the reader's fixed array can hold
+{ printf '##maf version=1\na score=0\n'
+  i=0
+  while [ $i -lt 5001 ]; do printf 's sp%d.c1 1 8 + 99 ACGTACGT\n' $i; i=$((i+1)); done
+  printf '\n'
+} > "$work/toomany.maf"
+
 status=0
 for f in empty.aln oneseq.aln unequal.aln tiny.aln fasta.aln truncated.maf \
-         emptyblock.maf twoblocks.maf control.aln; do
+         emptyblock.maf twoblocks.maf toomany.maf control.aln; do
   err=$( { run_limited 60 "$SISSIZ" --seed 1 -n 5 "$work/$f" >/dev/null; } 2>&1 ); rc=$?
   if [ "$rc" -eq 137 ] || [ "$rc" -eq 9 ]; then
     echo "FAIL: $f did not terminate" >&2; status=1

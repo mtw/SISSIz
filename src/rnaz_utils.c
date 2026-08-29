@@ -200,6 +200,13 @@ int read_maf(FILE *clust, struct aln *alignedSeqs[]) {
 		exit(EXIT_FAILURE);
 	  }
 
+	  if (num_seq>=MAX_NUM_NAMES-1) {   /* one slot reserved for the terminator */
+		free(line);
+		freeFields(fields);
+		nrerror("ERROR: Too many sequences in MAF file");
+		return 0;
+	  }
+
 	  alignedSeqs[num_seq++]=createAlnEntry(name,seq,start,length,fullLength,strand);
 
     free(line);

@@ -41,6 +41,8 @@
 
 /* Function prototypes */
 
+static int nameTaken(const struct aln *aln[], int upto, const char *name);
+
 TTree* treeFromString(char* treeStrin);
 void tree2aln(TTree* tree, struct aln *alignment[]);
 void countFreqsDi(const struct aln *alignment[], double freqs[][4]);
@@ -348,11 +350,13 @@ int main(int argc, char *argv[]){
     exit(1);
   }
 
-  /* Newick has no quoting here, so a name carrying its syntax would produce
-     a tree the reader cannot parse.  Genomic names like chr1:100-200 are
-     common, so map the offending characters rather than refuse the file. */
+  /* Newick has no quoting here, and gap restoration and the MAF metadata
+     lookup both key on the name, so names must carry no Newick punctuation
+     and must be distinct.  Genomic names like chr1:100-200 are common, so
+     adjust them rather than refuse the file. */
   numRenamed=0;
   for (i=0; inputAln[i]!=NULL; i++){
+    renamed=0;
     tmpSeq=inputAln[i]->name;
     for (j=0; tmpSeq[j]; j++){
       if (strchr("(),:;'[]", tmpSeq[j])!=NULL){
@@ -360,11 +364,24 @@ int main(int argc, char *argv[]){
         renamed=1;
       }
     }
-    if (renamed){ numRenamed++; renamed=0; }
+
+    if (nameTaken((const struct aln**)inputAln, i, inputAln[i]->name)){
+      char *base=strdup(inputAln[i]->name);
+      int suffix=2;
+      do {
+        free(inputAln[i]->name);
+        inputAln[i]->name=(char*)space(strlen(base)+16);
+        sprintf(inputAln[i]->name,"%s_%d",base,suffix++);
+      } while (nameTaken((const struct aln**)inputAln, i, inputAln[i]->name));
+      free(base);
+      renamed=1;
+    }
+
+    if (renamed) numRenamed++;
   }
 
   if (numRenamed>0){
-    fprintf(stderr,"WARNING: Replaced Newick syntax characters in %u sequence name(s) with '_'.\n",numRenamed);
+    fprintf(stderr,"WARNING: Adjusted %u sequence name(s) to be Newick safe and unique.\n",numRenamed);
   }
 
   numAmbiguous=0;
@@ -1165,6 +1182,16 @@ int main(int argc, char *argv[]){
 
   exit(EXIT_SUCCESS);
 
+}
+
+/* Is name already used by one of the first "upto" sequences? */
+static int nameTaken(const struct aln *aln[], int upto, const char *name){
+  int k;
+
+  for (k=0;k<upto;k++){
+    if (strcmp(aln[k]->name,name)==0) return 1;
+  }
+  return 0;
 }
 
 TTree* treeFromString(char* treeString){

@@ -240,192 +240,31 @@ void *CAllocMem(long n, char *name, char *func, int showInfo)
     return(zahl);
     }
 
-     /***************translate doublets in int****************************************************/
-   int  tripletTO64(char letter1, char letter2, char letter3){
-   int zahl=-1;
-
-
-      switch(letter1){
-	  case 'A': case 'a':
-         switch(letter2){
-                case 'A': case 'a':                     
-				         switch(letter3){
-                         case 'A': case 'a':                     zahl =  0; break;
-                         case 'C': case 'c':                     zahl =  1; break;
-                         case 'G': case 'g':                     zahl =  2; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl =  3; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'C': case 'c':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl =  4; break;
-                         case 'C': case 'c':                     zahl =  5; break;
-                         case 'G': case 'g':                     zahl =  6; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl =  7; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'G': case 'g':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl =  8; break;
-                         case 'C': case 'c':                     zahl =  9; break;
-                         case 'G': case 'g':                     zahl = 10; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 11; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'U': case 'u':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 12; break;
-                         case 'C': case 'c':                     zahl = 13; break;
-                         case 'G': case 'g':                     zahl = 14; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 15; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-               break;
-		   }
-	  break;
-		 case 'C': case 'c':
-         switch(letter2){
-                case 'A': case 'a':                     
-				         switch(letter3){
-                         case 'A': case 'a':                     zahl = 16; break;
-                         case 'C': case 'c':                     zahl = 17; break;
-                         case 'G': case 'g':                     zahl = 18; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 19; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'C': case 'c':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 20; break;
-                         case 'C': case 'c':                     zahl = 21; break;
-                         case 'G': case 'g':                     zahl = 22; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 23; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'G': case 'g':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 24; break;
-                         case 'C': case 'c':                     zahl = 25; break;
-                         case 'G': case 'g':                     zahl = 26; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 27; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'U': case 'u':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 28; break;
-                         case 'C': case 'c':                     zahl = 29; break;
-                         case 'G': case 'g':                     zahl = 30; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 31; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-               break;
-		   }
-		break;
-		case 'G': case 'g':
-         switch(letter2){
-                case 'A': case 'a':                     
-				         switch(letter3){
-                         case 'A': case 'a':                     zahl = 32; break;
-                         case 'C': case 'c':                     zahl = 33; break;
-                         case 'G': case 'g':                     zahl = 34; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 35; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'C': case 'c':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 36; break;
-                         case 'C': case 'c':                     zahl = 37; break;
-                         case 'G': case 'g':                     zahl = 38; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 39; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'G': case 'g':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 40; break;
-                         case 'C': case 'c':                     zahl = 41; break;
-                         case 'G': case 'g':                     zahl = 41; break;
-                         case 'T': case 't':                     
-                         case 'U': case 'u':                     zahl = 43; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'U': case 'u':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 44; break;
-                         case 'C': case 'c':                     zahl = 45; break;
-                         case 'G': case 'g':                     zahl = 46; break;
-                         case 'T': case 't':                     
-                         case 'U': case 'u':                     zahl = 47; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-               break;
-		   }
-		break;
-		case 'U': case 'u':
-         switch(letter2){
-                case 'A': case 'a':                     
-				         switch(letter3){
-                         case 'A': case 'a':                     zahl = 48; break;
-                         case 'C': case 'c':                     zahl = 49; break;
-                         case 'G': case 'g':                     zahl = 50; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 51; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'C': case 'c':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 52; break;
-                         case 'C': case 'c':                     zahl = 53; break;
-                         case 'G': case 'g':                     zahl = 54; break;
-                         case 'T': case 't':                     
-                         case 'U': case 'u':                     zahl = 55; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'G': case 'g':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 56; break;
-                         case 'C': case 'c':                     zahl = 57; break;
-                         case 'G': case 'g':                     zahl = 58; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 59; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-			   break;			 
-			   case 'U': case 'u':   			 
-						 switch(letter3){
-                         case 'A': case 'a':                     zahl = 60; break;
-                         case 'C': case 'c':                     zahl = 61; break;
-                         case 'G': case 'g':                     zahl = 62; break;
-                         case 'T': case 't':                    
-                         case 'U': case 'u':                     zahl = 63; break;
-                         default: fprintf(stderr, "Illegal nucleotide symbol! %c\n",letter3);break;
-                         }
-               break;
-		   }
-	  break;
-      }
-      return(zahl);
+     /***************translate triplets in int****************************************************/
+static int tripletBaseIndex(char letter){
+  switch(letter){
+  case 'A': case 'a': return 0;
+  case 'C': case 'c': return 1;
+  case 'G': case 'g': return 2;
+  case 'T': case 't':
+  case 'U': case 'u': return 3;
+  default: return -1;
+  }
 }
 
+int tripletTO64(char letter1, char letter2, char letter3){
+  int first=tripletBaseIndex(letter1);
+  int second=tripletBaseIndex(letter2);
+  int third=tripletBaseIndex(letter3);
+
+  if (first<0 || second<0 || third<0){
+    char invalid=(first<0)?letter1:((second<0)?letter2:letter3);
+    fprintf(stderr,"Illegal nucleotide symbol! %c\n",invalid);
+    return -1;
+  }
+
+  return 16*first+4*second+third;
+}
 
 
 

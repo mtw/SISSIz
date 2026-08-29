@@ -30,3 +30,4 @@ valgrind-build/
 # automake test driver output
 tests/*.log
 tests/*.trs
+tests/triplet-map-test

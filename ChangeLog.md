@@ -2,11 +2,21 @@
 
 ## 0.2.0
 
-Results change with this release. Two of the fixes below alter the numbers
+Results change with this release. Three of the fixes below alter the numbers
 SISSIz reports, so anything produced with an earlier version should be
 regenerated rather than compared.
 
 ### Model and scoring
+
+* The triplet encoder mapped both GGC and GGG to state 41 and never produced
+  state 42. Consequently, every GGG context used GGC mutation probabilities
+  during both distance regression and final alignment simulation. The encoder
+  now maps all 64 triplets bijectively, treats T and U consistently in every
+  position, and rejects invalid internal sequence data before it can index a
+  probability table. Dinucleotide-model results, including seeded results,
+  change; the mononucleotide model is unaffected. In 200 paired runs on the
+  bundled rRNA alignment the mean z-score shift was +0.024 (95% interval
+  -0.019 to +0.068), with a mean absolute per-run change of 0.245.
 
 * Pairwise alignments were scored against a degenerate null model. The
   two-taxon Newick string was written with `%.f`, so any divergence below 0.5

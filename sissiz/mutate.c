@@ -94,6 +94,19 @@ void   MutateSequenceInd(char *seq, double len, double *Qij);
 void   MutateSequenceIndqx(char *seq, double len, double *Qij);
 
 double** computePij(double **QT2ij);
+static int checkedTripletIndex(char first, char second, char third);
+
+static int checkedTripletIndex(char first, char second, char third)
+{
+  int index=tripletTO64(first,second,third);
+
+  if (index<0){
+    fprintf(stderr,"Invalid nucleotide in internal sequence.\n");
+    exit(EXIT_FAILURE);
+  }
+
+  return index;
+}
 
 
  double getrandomdouble()
@@ -648,13 +661,13 @@ void MutateSequenceZqx(char *seq, double len, double **QT2ij){
       //printf("\n");
 
       if (secpos==0){
-        trip=tripletTO64(seq[seqlen-1],seq[secpos],seq[secpos+1]);
+        trip=checkedTripletIndex(seq[seqlen-1],seq[secpos],seq[secpos+1]);
       } else {
         if(secpos==(seqlen-1)) {
-          trip=tripletTO64(seq[secpos-1],seq[secpos],seq[0]);
+          trip=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[0]);
         }
         else {
-          trip=tripletTO64(seq[secpos-1],seq[secpos],seq[secpos+1]);
+          trip=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[secpos+1]);
         }
       }
 
@@ -1431,9 +1444,9 @@ double *cprobmutTripletz(int pos, double **QT2ij, char *seq){
 		    probmutij_trip=(double *)malloc(64*sizeof(double));
 			for(j=0 ; j<64 ; j++) probmutij_trip[j]=0.00;
 
-            if(pos==0) t=tripletTO64(seq[seqlen-1],seq[pos],seq[pos+1]);
-			else if(pos==(seqlen-1)) t=tripletTO64(seq[pos-1],seq[pos],seq[0]);
-            else t=tripletTO64(seq[pos-1],seq[pos],seq[pos+1]);
+            if(pos==0) t=checkedTripletIndex(seq[seqlen-1],seq[pos],seq[pos+1]);
+            else if(pos==(seqlen-1)) t=checkedTripletIndex(seq[pos-1],seq[pos],seq[0]);
+            else t=checkedTripletIndex(seq[pos-1],seq[pos],seq[pos+1]);
 			for(j=0 ; j<64; j++) {
 				if(t != j) {
 						probmutij_trip[j] = - QT2ij[t][j]/QT2ij[t][t];
@@ -1512,9 +1525,9 @@ double *cprobmutTripletzqx(int pos, double **QT2ij, char *seq){
 		    probmutij_trip=(double *)malloc(64*sizeof(double));
 			for(j=0 ; j<64 ; j++) probmutij_trip[j]=0.00;
 
-            if(pos==0) t=tripletTO64(seq[seqlen-1],seq[pos],seq[pos+1]);
-			else if(pos==(seqlen-1)) t=tripletTO64(seq[pos-1],seq[pos],seq[0]);
-            else t=tripletTO64(seq[pos-1],seq[pos],seq[pos+1]);
+            if(pos==0) t=checkedTripletIndex(seq[seqlen-1],seq[pos],seq[pos+1]);
+            else if(pos==(seqlen-1)) t=checkedTripletIndex(seq[pos-1],seq[pos],seq[0]);
+            else t=checkedTripletIndex(seq[pos-1],seq[pos],seq[pos+1]);
 			
 			probsum_mut=0.00;
 			waiting_qjj=0.00;
@@ -1597,11 +1610,11 @@ double *rateDIz(char *seq, double **QT2ij, double *rat)
 	    rat[pos]=10;
 	    /* fprintf(stderr, "%d von %d\n",pos, seqlen);*/
 		if(pos==0){
-              t=tripletTO64(seq[seqlen-1],seq[0],seq[1]);
+              t=checkedTripletIndex(seq[seqlen-1],seq[0],seq[1]);
 		}else if(pos==seqlen-1){	 
-		      t=tripletTO64(seq[seqlen-2],seq[seqlen-1],seq[0]);
+              t=checkedTripletIndex(seq[seqlen-2],seq[seqlen-1],seq[0]);
 	    }else {
-	          t=tripletTO64(seq[pos-1],seq[pos],seq[pos+1]);
+              t=checkedTripletIndex(seq[pos-1],seq[pos],seq[pos+1]);
 	    }
 		
 		if(sitefactor==0)  rat[pos]= QT2ij[t][t];
@@ -1625,9 +1638,9 @@ double *changerateDIz(int secpos, double *rat, char *seq, double **QT2ij){
   int t1,t2,t3;
  /* fprintf(stderr, "pos %d", secpos);*/
   if(secpos==0){
-  t1=tripletTO64(seq[seqlen-2],seq[seqlen-1],seq[secpos]);
-  t2=tripletTO64(seq[seqlen-1],seq[secpos],seq[secpos+1]);
-  t3=tripletTO64(seq[secpos],seq[secpos+1],seq[secpos+2]);
+  t1=checkedTripletIndex(seq[seqlen-2],seq[seqlen-1],seq[secpos]);
+  t2=checkedTripletIndex(seq[seqlen-1],seq[secpos],seq[secpos+1]);
+  t3=checkedTripletIndex(seq[secpos],seq[secpos+1],seq[secpos+2]);
   if(sitefactor==0){  
      rat[seqlen-1]=QT2ij[t1][t1];
      rat[secpos]=QT2ij[t2][t2];
@@ -1639,9 +1652,9 @@ double *changerateDIz(int secpos, double *rat, char *seq, double **QT2ij){
   }	 
 }  
 else if(secpos==1){
-  t1=tripletTO64(seq[seqlen-1],seq[secpos-1],seq[secpos]);
-  t2=tripletTO64(seq[secpos-1],seq[secpos],seq[secpos+1]);
-  t3=tripletTO64(seq[secpos],seq[secpos+1],seq[secpos+2]);
+  t1=checkedTripletIndex(seq[seqlen-1],seq[secpos-1],seq[secpos]);
+  t2=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[secpos+1]);
+  t3=checkedTripletIndex(seq[secpos],seq[secpos+1],seq[secpos+2]);
   if(sitefactor==0){ 
      rat[secpos-1]=QT2ij[t1][t1];
      rat[secpos]=QT2ij[t2][t2];
@@ -1653,9 +1666,9 @@ else if(secpos==1){
  }	 
 }  
 else if(secpos==seqlen-1){
-  t1=tripletTO64(seq[secpos-2],seq[secpos-1],seq[secpos]);
-  t2=tripletTO64(seq[secpos-1],seq[secpos],seq[0]);
-  t3=tripletTO64(seq[secpos],seq[0],seq[1]);
+  t1=checkedTripletIndex(seq[secpos-2],seq[secpos-1],seq[secpos]);
+  t2=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[0]);
+  t3=checkedTripletIndex(seq[secpos],seq[0],seq[1]);
   if(sitefactor==0){ 
      rat[secpos-1]=QT2ij[t1][t1];
      rat[secpos]=QT2ij[t2][t2];
@@ -1667,9 +1680,9 @@ else if(secpos==seqlen-1){
   }	 
 } 
 else if(secpos==seqlen-2){
-  t1=tripletTO64(seq[secpos-2],seq[secpos-1],seq[secpos]);
-  t2=tripletTO64(seq[secpos-1],seq[secpos],seq[secpos+1]);
-  t3=tripletTO64(seq[secpos],seq[secpos+1],seq[0]);
+  t1=checkedTripletIndex(seq[secpos-2],seq[secpos-1],seq[secpos]);
+  t2=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[secpos+1]);
+  t3=checkedTripletIndex(seq[secpos],seq[secpos+1],seq[0]);
   if(sitefactor==0){ 
      rat[secpos-1]=QT2ij[t1][t1];
      rat[secpos]=QT2ij[t2][t2];
@@ -1681,9 +1694,9 @@ else if(secpos==seqlen-2){
  }	   
 } 
 else{
-  t1=tripletTO64(seq[secpos-2],seq[secpos-1],seq[secpos]);
-  t2=tripletTO64(seq[secpos-1],seq[secpos],seq[secpos+1]);
-  t3=tripletTO64(seq[secpos],seq[secpos+1],seq[secpos+2]);
+  t1=checkedTripletIndex(seq[secpos-2],seq[secpos-1],seq[secpos]);
+  t2=checkedTripletIndex(seq[secpos-1],seq[secpos],seq[secpos+1]);
+  t3=checkedTripletIndex(seq[secpos],seq[secpos+1],seq[secpos+2]);
   if(sitefactor==0){ 
      rat[secpos-1]=QT2ij[t1][t1];
      rat[secpos]=QT2ij[t2][t2];
@@ -1879,4 +1892,3 @@ double plusrsumInd(int secpos, double *rat, double rsum){
 
  
 	
-

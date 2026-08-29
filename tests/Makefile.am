@@ -1,8 +1,10 @@
 # Fast functional tests, run by "make check".
-TESTS = \
+# Shell tests are distributed as sources; the compiled test is generated.
+SHELL_TESTS = \
     calibration.sh \
     composition.sh \
     seed.sh \
+    golden.sh \
     output.sh \
     terminate.sh \
     arguments.sh \
@@ -14,6 +16,12 @@ TESTS = \
     nossr.sh \
     sanitize.sh \
     valgrind.sh
+
+check_PROGRAMS = triplet-map-test
+TESTS = $(check_PROGRAMS) $(SHELL_TESTS)
+triplet_map_test_SOURCES = triplet-map-test.c
+triplet_map_test_CPPFLAGS = -I$(top_srcdir)/sissiz
+triplet_map_test_LDADD = $(top_builddir)/sissiz/libSISSI.a
 
 # Slow statistical test, run by "make check-stats" from the top directory.
 STATS_TESTS = nulldist.sh
@@ -35,7 +43,7 @@ check-stats:
 EXTRA_DIST = \
     common.sh \
     valgrind.supp \
-    $(TESTS) \
+    $(SHELL_TESTS) \
     $(STATS_TESTS) \
     data/multi.aln \
     data/multi.maf \

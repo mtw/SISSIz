@@ -1,4 +1,5 @@
  #include <stdio.h>
+#include <math.h>
  #include <stdlib.h>
  #include <string.h>
  #include <ctype.h>
@@ -821,9 +822,12 @@ double **rateT2(){
 	 fprintf(stderr,"Triplet2: dig=%f\n",dig);
   }
     
+  /* dig is the expected number of substitutions per site; dividing by a
+     zero or non-finite value fills the matrix with Inf or NaN.  Zero the
+     matrix instead so the degenerate-model check rejects the input. */
   for(i=0;i<64;i++)
         for(j=0;j<64;j++)
-                QT2ij[i][j] /= dig ;                     /*AB HIER PI*RATE -> NORMIERUNG*/
+                QT2ij[i][j] = (isfinite(dig) && dig>0.0) ? QT2ij[i][j]/dig : 0.0;   /*AB HIER PI*RATE -> NORMIERUNG*/
 
   if(verboseQMatrix==1){
      fprintf(stderr,"\n");

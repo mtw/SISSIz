@@ -2,9 +2,10 @@
 
 ## 0.2.0
 
-Results change with this release. Three of the fixes below alter the numbers
-SISSIz reports, so anything produced with an earlier version should be
-regenerated rather than compared.
+Results change with this release. The corrected triplet encoder, the pairwise
+tree fix, the reworked waiting-time accounting and the higher regression
+default each alter the numbers SISSIz reports, so output from an earlier
+version should be regenerated rather than compared.
 
 ### Model and scoring
 
@@ -49,11 +50,31 @@ regenerated rather than compared.
 
 * A composition skewed enough to zero every triplet exit rate yielded a rate
   matrix of zeros and a mutation loop that never terminated. Such input is now
-  refused with a message.
+  refused with a message. A related case slipped past that first guard: when
+  the expected substitution rate is exactly zero, normalising the rate matrix
+  divides by zero and fills it with infinities, making the waiting time per
+  proposal exactly zero, again without the loop ever advancing. The
+  normaliser is now validated and the rate check rejects non-finite values.
 
 * Ragged sequence lengths hung the tool. The readers signal a malformed
   alignment by returning 0 and that return value was ignored, leaving the
   alignment half-read.
+
+* A sequence name carrying Newick punctuation, such as `chr1:100-200`,
+  produced a tree the reader could not parse, after which SISSIz exited 0
+  without any output. Such characters are now replaced with `_`, and names
+  are kept distinct: duplicates, whether present in the input or created by
+  the replacement, are suffixed, since gap restoration and the MAF metadata
+  lookup both key on the name.
+
+* A MAF file with more than 5000 sequence rows wrote past the end of a fixed
+  array, and a MAF block without sequence rows dereferenced a null pointer.
+  The reader now enforces the same limit the CLUSTAL reader always had and
+  refuses an empty block.
+
+* A leftover debug printf wrote the maximum-likelihood tree to stdout
+  whenever kappa was estimated, gluing the Newick string onto the
+  tab-separated result line.
 
 * Fixed a heap buffer overflow. MAF sequence names have no length limit but
   were copied into phyml's 100-byte name buffer.
@@ -73,6 +94,11 @@ regenerated rather than compared.
 * The cumulative scans in `choosenuc` and `cchoosetriplet` ran past the end of
   their probability arrays whenever rounding left the running sum just short
   of the drawn value.
+
+* Two smaller undefined behaviours: the BIONJ sum pass read an uninitialised
+  value for rows already removed from the distance matrix, and the verbose
+  Markov dump printed one row past the end of its 4x4 table. Neither affected
+  ordinary output.
 
 * Out-of-range values for `--num-samples`, `--precision`,
   `--num-samples-regression` and `--gamma` used to run to completion and

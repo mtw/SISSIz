@@ -602,8 +602,9 @@ int main(int argc, char *argv[]){
     maxRate=PijUnifRate;
   }
 
-  /* an all zero rate matrix would leave the mutation loop spinning */
-  if (!(maxRate>0.0)){
+  /* A rate of zero, NaN or infinity would leave the mutation loop
+     spinning: at +Inf the waiting time per proposal becomes exactly 0. */
+  if (!isfinite(maxRate) || maxRate<=0.0){
     fprintf(stderr,"ERROR: Degenerate rate matrix, the nucleotide composition of %s is too skewed to simulate.\n",inputFileName);
     exit(1);
   }

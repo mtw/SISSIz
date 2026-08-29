@@ -35,9 +35,9 @@ int main(void)
 
         /* Case must not affect the encoding. */
         for (mask=0;mask<8;mask++){
-          checkMapping((mask&1)?tolower((unsigned char)rna[i]):rna[i],
-                       (mask&2)?tolower((unsigned char)rna[j]):rna[j],
-                       (mask&4)?tolower((unsigned char)rna[k]):rna[k],
+          checkMapping((mask&1)?(char)tolower((unsigned char)rna[i]):rna[i],
+                       (mask&2)?(char)tolower((unsigned char)rna[j]):rna[j],
+                       (mask&4)?(char)tolower((unsigned char)rna[k]):rna[k],
                        expected);
         }
       }
@@ -58,9 +58,9 @@ int main(void)
       for (k=0;k<5;k++){
         expected=16*dnaRnaIndex[i]+4*dnaRnaIndex[j]+dnaRnaIndex[k];
         for (mask=0;mask<8;mask++){
-          checkMapping((mask&1)?tolower((unsigned char)dnaRna[i]):dnaRna[i],
-                       (mask&2)?tolower((unsigned char)dnaRna[j]):dnaRna[j],
-                       (mask&4)?tolower((unsigned char)dnaRna[k]):dnaRna[k],
+          checkMapping((mask&1)?(char)tolower((unsigned char)dnaRna[i]):dnaRna[i],
+                       (mask&2)?(char)tolower((unsigned char)dnaRna[j]):dnaRna[j],
+                       (mask&4)?(char)tolower((unsigned char)dnaRna[k]):dnaRna[k],
                        expected);
         }
       }

@@ -320,14 +320,13 @@ void CCompute_sums_Sx(float **delta, int n)
   
   for(i= 1; i <= n ; i++)
     {
-      if(!EEmptied(i,delta))
+      if(EEmptied(i,delta))                      /* the diagonal of an      */
+	continue;                                /* emptied row is not read */
+      sum=0;
+      for(j=1; j <=n; j++)
 	{
-	  sum=0;
-	  for(j=1; j <=n; j++)
-	    {
-	      if(i != j && !EEmptied(j,delta))           /* compute the sum Si */
-		sum=sum + DDistance(i,j,delta);
-	    }
+	  if(i != j && !EEmptied(j,delta))           /* compute the sum Si */
+	    sum=sum + DDistance(i,j,delta);
 	}
       delta[i][i]=sum;                           /* store the sum Si in */
     }                                               /* delta’s diagonal    */

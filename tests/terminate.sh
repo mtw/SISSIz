@@ -21,5 +21,13 @@ check_terminates() {
 }
 
 check_terminates "degenerate alignment" 60 -n 5 "$DATA/degenerate.aln"
+
+# near-identical sequences can zero the expected substitution rate; the
+# normaliser then made the rate matrix infinite and the waiting time per
+# proposal exactly zero, so the mutation loop never advanced
+printf 'CLUSTAL W(1.81)\n\n\n%-12s%s\n%-12s%s\n%-12s%s\n%-12s%s\n' \
+    a ACGTACGT b ACGTACGT c ACGTACGT d ACGTACGA > "${TMPDIR:-/tmp}/sissiz-inf.aln"
+check_terminates "infinite-rate alignment" 60 --simulate -n 1 -m 1 "${TMPDIR:-/tmp}/sissiz-inf.aln"
+rm -f "${TMPDIR:-/tmp}/sissiz-inf.aln"
 check_terminates "unreachable --precision" 90 -s -p 0.0001 -n 5 "$DATA/multi.aln"
 exit $status

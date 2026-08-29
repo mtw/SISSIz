@@ -100,7 +100,7 @@ static int checkedTripletIndex(char first, char second, char third)
 {
   int index=tripletTO64(first,second,third);
 
-  if (index<0){
+  if (index<0 || index>=64){
     fprintf(stderr,"Invalid nucleotide in internal sequence.\n");
     exit(EXIT_FAILURE);
   }
@@ -261,13 +261,15 @@ static int checkedTripletIndex(char first, char second, char third)
         }
 		k++;
       }  
-	  summarkov=0.00;
 	  if(verboseMarkov==1){
+	     for(i=0;i<4;i++){
+		   summarkov=0.00;
 		   for(j=0;j<4;j++){
 		      fprintf(stderr, "%lf ", markovd[i][j]);
 		       summarkov=summarkov+ markovd[i][j];
 		   }
 		   fprintf(stderr, "=%lf\n",	summarkov);   
+	     }
 	 }	   
 	    		   
 

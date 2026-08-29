@@ -56,9 +56,10 @@ into a self-contained directory run configure for example like this:
 
 Functional tests, about ten seconds. Checks that the sampled alignments
 reproduce the identity and nucleotide composition of the input, that
---seed makes a run reproducible, that stdout carries the result line and
-nothing else, that unusable input is refused, and that out of range
-options are rejected.
+--seed makes a run reproducible, that a seeded reference result is
+matched exactly, that the triplet encoder maps all 64 states correctly,
+that stdout carries the result line and nothing else, that unusable
+input is refused, and that out of range options are rejected.
 
     make check-asan
 
